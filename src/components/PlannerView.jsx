@@ -161,24 +161,47 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
     <div>
       <div className="bg-gray-900 rounded-xl p-4 mb-4">
         <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Weekly Volume</p>
-        <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-thin">
-          {Object.entries(muscleCats).map(([cat, muscles]) => (
-            <div key={cat} className="bg-gray-800 rounded-lg p-2 flex-shrink-0 snap-start" style={{ minWidth: "140px" }}>
-              <p className="text-xs font-semibold text-white mb-2 text-center">{cat}</p>
-              <div className="space-y-1">
-                {muscles.filter(m => m in goals).map(muscle => {
-                  const curr = vol[muscle] || 0, tgt = goals[muscle] || 0, done = tgt > 0 && curr >= tgt;
-                  return (
-                    <div key={muscle} className={`text-xs px-1 py-0.5 rounded text-center leading-tight ${done ? "bg-green-500/20 text-green-400" : curr > 0 ? "bg-orange-500/20 text-orange-400" : "bg-gray-700 text-gray-500"}`}>
-                      <div className="truncate">{muscle}</div>
-                      <div className="font-semibold">{curr}{tgt > 0 ? `/${tgt}` : "—"}</div>
-                    </div>
-                  );
-                })}
+        {isMobile ? (
+          // Mobile: Carousel mode (2 cards visible, scroll for more)
+          <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-thin -mx-4 px-4">
+            {Object.entries(muscleCats).map(([cat, muscles]) => (
+              <div key={cat} className="bg-gray-800 rounded-lg p-2 flex-shrink-0 snap-start" style={{ width: "calc(50% - 4px)", minWidth: "140px" }}>
+                <p className="text-xs font-semibold text-white mb-2 text-center">{cat}</p>
+                <div className="space-y-1">
+                  {muscles.filter(m => m in goals).map(muscle => {
+                    const curr = vol[muscle] || 0, tgt = goals[muscle] || 0, done = tgt > 0 && curr >= tgt;
+                    return (
+                      <div key={muscle} className={`text-xs px-1 py-0.5 rounded text-center leading-tight ${done ? "bg-green-500/20 text-green-400" : curr > 0 ? "bg-orange-500/20 text-orange-400" : "bg-gray-700 text-gray-500"}`}>
+                        <div className="truncate">{muscle}</div>
+                        <div className="font-semibold">{curr}{tgt > 0 ? `/${tgt}` : "—"}</div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          // Desktop: Grid layout (all 6 cards visible)
+          <div className="grid grid-cols-6 gap-2">
+            {Object.entries(muscleCats).map(([cat, muscles]) => (
+              <div key={cat} className="bg-gray-800 rounded-lg p-2">
+                <p className="text-xs font-semibold text-white mb-2 text-center">{cat}</p>
+                <div className="space-y-1">
+                  {muscles.filter(m => m in goals).map(muscle => {
+                    const curr = vol[muscle] || 0, tgt = goals[muscle] || 0, done = tgt > 0 && curr >= tgt;
+                    return (
+                      <div key={muscle} className={`text-xs px-1 py-0.5 rounded text-center leading-tight ${done ? "bg-green-500/20 text-green-400" : curr > 0 ? "bg-orange-500/20 text-orange-400" : "bg-gray-700 text-gray-500"}`}>
+                        <div className="truncate">{muscle}</div>
+                        <div className="font-semibold">{curr}{tgt > 0 ? `/${tgt}` : "—"}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex gap-1 mb-4">
