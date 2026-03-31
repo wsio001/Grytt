@@ -1,0 +1,5 @@
+/* SettingsView Styles */
+
+.categoryContainer {
+  @apply space-y-4;
+}

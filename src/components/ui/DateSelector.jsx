@@ -1,5 +1,6 @@
 import { Check, Edit2 } from "lucide-react";
 import { DAYS } from "../../constants";
+import styles from "./styles/DateSelector.module.css";
 
 export default function DateSelector({
   activeDay,
@@ -12,18 +13,18 @@ export default function DateSelector({
   confirmName
 }) {
   return (
-    <div className="flex gap-1 mb-4">
+    <div className={styles.container}>
       {DAYS.map(day => (
         <button
           key={day}
           onClick={() => setActiveDay(day)}
-          className={`flex-1 py-1.5 text-center rounded-lg text-sm font-medium transition-colors ${
+          className={`${styles.dayButton} ${
             activeDay === day
-              ? "bg-orange-500 text-white"
-              : "bg-gray-900 text-gray-400 hover:bg-gray-800"
+              ? styles.dayButtonActive
+              : styles.dayButtonInactive
           }`}>
           <div>{day}</div>
-          <div className={`text-xs truncate mt-0.5 ${activeDay === day ? "text-orange-200" : "text-gray-600"}`}>
+          <div className={`${styles.dayName} ${activeDay === day ? styles.dayNameActive : styles.dayNameInactive}`}>
             {dayNames[day] || "Rest"}
           </div>
         </button>

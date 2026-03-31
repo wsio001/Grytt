@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import { Dumbbell, Calendar, BookOpen, Settings, LogOut } from "lucide-react";
 import LoginScreen from "./components/LoginScreen";
-import TodayView from "./components/TodayView";
-import PlannerView from "./components/PlannerView";
-import LibraryView from "./components/LibraryView";
-import SettingsView from "./components/SettingsView";
+import TodayView from "./components/views/TodayView/TodayView";
+import PlannerView from "./components/views/PlannerView/PlannerView";
+import LibraryView from "./components/views/LibraryView/LibraryView";
+import SettingsView from "./components/views/SettingsView/SettingsView";
 import { useDebouncedSave } from "./hooks/useDebouncedSave";
 import { sbLoadData, sbSignIn } from "./lib/supabase";
 import { USER_MAP } from "./lib/supabase";
@@ -125,7 +125,7 @@ export default function App() {
     { id: "today",    icon: Dumbbell,  label: "Today" },
     { id: "planner",  icon: Calendar,  label: "Planner" },
     { id: "library",  icon: BookOpen,  label: "Exercises" },
-    { id: "settings", icon: Settings,  label: "Muscle Groups" },
+    { id: "settings", icon: Settings,  label: "Goal" },
   ];
 
   return (

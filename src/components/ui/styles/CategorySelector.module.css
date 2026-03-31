@@ -1,0 +1,21 @@
+/* CategorySelector Styles */
+
+.label {
+  @apply text-xs text-gray-500 mb-1.5;
+}
+
+.buttonContainer {
+  @apply flex flex-wrap gap-1.5;
+}
+
+.button {
+  @apply text-xs px-3 py-1.5 rounded-full transition-colors;
+}
+
+.buttonActive {
+  @apply bg-orange-500 text-white;
+}
+
+.buttonInactive {
+  @apply bg-gray-800 text-gray-400 hover:bg-gray-700;
+}

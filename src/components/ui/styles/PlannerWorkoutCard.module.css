@@ -1,0 +1,85 @@
+/* PlannerWorkoutCard Styles */
+
+.supersetContainer {
+  @apply relative bg-gray-900 rounded-lg p-2 border-2 border-orange-500/30;
+}
+
+.supersetIndicator {
+  @apply absolute -left-1 top-0 bottom-0 w-1 bg-orange-500 rounded-l;
+}
+
+.supersetHeader {
+  @apply flex items-center gap-1 mb-2 px-1;
+}
+
+.supersetLabel {
+  @apply text-xs font-bold text-orange-400 uppercase tracking-wide;
+}
+
+.cardRow {
+  @apply flex gap-2;
+}
+
+.cardRowMobile {
+  @apply flex gap-2 flex-col;
+}
+
+.cardRowDragging {
+  @apply opacity-50;
+}
+
+.exerciseCard {
+  @apply flex-1 bg-gray-800 rounded-lg p-2 transition-all;
+}
+
+.exerciseCardMobile {
+  @apply w-full bg-gray-800 rounded-lg p-2 transition-all;
+}
+
+.exerciseCardDraggable {
+  @apply cursor-grab active:cursor-grabbing;
+}
+
+.unknownExercise {
+  @apply flex-1 bg-gray-800 rounded-lg p-2 text-xs text-gray-600 italic;
+}
+
+.exerciseHeader {
+  @apply flex items-center gap-1.5;
+}
+
+.gripIcon {
+  @apply text-gray-500 flex-shrink-0;
+}
+
+.supersetNumber {
+  @apply text-xs text-orange-400 font-bold mr-1;
+}
+
+.exerciseName {
+  @apply flex-1 text-xs font-medium truncate;
+}
+
+.button {
+  @apply p-0.5 bg-gray-700 rounded hover:bg-gray-600;
+}
+
+.setsCount {
+  @apply w-4 text-center text-orange-400 font-bold text-xs;
+}
+
+.deleteButton {
+  @apply p-0.5 text-red-400 rounded hover:bg-red-500/20 ml-0.5;
+}
+
+.dropZoneSuperset {
+  @apply flex-1;
+}
+
+.dropZoneSupersetMobile {
+  @apply w-full mt-2;
+}
+
+.dropZoneNewRow {
+  @apply h-8 mt-2;
+}

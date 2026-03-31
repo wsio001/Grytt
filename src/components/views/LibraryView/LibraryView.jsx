@@ -1,11 +1,12 @@
 import { useState } from "react";
-import ExerciseModal from "./ExerciseModal";
-import MuscleCarousel from "./ui/MuscleCarousel";
-import ExerciseCard from "./ui/ExerciseCard";
-import AddExerciseForm from "./ui/AddExerciseForm";
-import LibraryHeader from "./ui/LibraryHeader";
-import EmptyState from "./ui/EmptyState";
-import { uid } from "../constants";
+import ExerciseModal from "../../ExerciseModal";
+import MuscleCarousel from "../../ui/MuscleCarousel";
+import ExerciseCard from "../../ui/ExerciseCard";
+import AddExerciseForm from "../../ui/AddExerciseForm";
+import LibraryHeader from "../../ui/LibraryHeader";
+import EmptyState from "../../ui/EmptyState";
+import { uid } from "../../../constants";
+import styles from "./LibraryView.module.css";
 
 export default function LibraryView({ exercises, setExercises, goals, muscleCats, setPlan }) {
   const [newName, setNewName] = useState("");
@@ -90,7 +91,7 @@ export default function LibraryView({ exercises, setExercises, goals, muscleCats
         />
       )}
       <MuscleCarousel muscleCats={muscleCats} catTab={catTab} setCatTab={setCatTab} />
-      <div className="space-y-2">
+      <div className={styles.exerciseList}>
         {getCatEx(catTab).map(ex => (
           <ExerciseCard
             key={ex.id}

@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import styles from "./styles/WorkoutProgressCard.module.css";
 
 export default function WorkoutProgressCard({ row, inputs, exMap, lastLogByEx, todayDate, onUpdate }) {
   const isSuperset = row.length > 1;
@@ -7,19 +8,19 @@ export default function WorkoutProgressCard({ row, inputs, exMap, lastLogByEx, t
     onUpdate(id, i, f, v), [onUpdate]);
 
   return (
-    <div className="bg-gray-900 rounded-xl p-4 border-2 border-gray-800">
+    <div className={styles.card}>
       {isSuperset && (
-        <div className="flex items-center gap-2 mb-3">
-          <div className="h-1 w-8 bg-orange-500 rounded-full"></div>
-          <div className="text-xs text-orange-400 font-semibold uppercase tracking-widest">Superset</div>
-          <div className="flex-1 h-1 bg-orange-500 rounded-full"></div>
+        <div className={styles.supersetHeader}>
+          <div className={styles.supersetLine}></div>
+          <div className={styles.supersetLabel}>Superset</div>
+          <div className={styles.supersetLineEnd}></div>
         </div>
       )}
-      <div className={isSuperset ? "space-y-3" : ""}>
+      <div className={isSuperset ? styles.supersetContent : ""}>
         {row.map((pe, peIndex) => {
           const ex = exMap.get(pe.exerciseId);
           if (!ex) return (
-            <div key={pe.id} className="bg-gray-800 rounded-lg p-3 text-xs text-gray-600 italic">
+            <div key={pe.id} className={styles.unknownExercise}>
               Unknown exercise
             </div>
           );
@@ -28,65 +29,65 @@ export default function WorkoutProgressCard({ row, inputs, exMap, lastLogByEx, t
           const cols = `0.5fr 2fr 2.5fr 0.5fr 2.5fr`;
 
           return (
-            <div key={pe.id} className="bg-gray-800 rounded-lg p-3">
-              <div className="flex justify-between items-start mb-1">
-                <div className="flex items-start gap-2 flex-1">
+            <div key={pe.id} className={styles.exerciseCard}>
+              <div className={styles.exerciseHeader}>
+                <div className={styles.exerciseInfo}>
                   {isSuperset && (
-                    <span className="text-xs font-bold text-orange-400 bg-orange-500/20 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className={styles.supersetBadge}>
                       {peIndex + 1}
                     </span>
                   )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold">{ex.name}</p>
-                    <div className="flex flex-wrap gap-1 mt-1">
+                  <div className={styles.exerciseDetails}>
+                    <p className={styles.exerciseName}>{ex.name}</p>
+                    <div className={styles.tagContainer}>
                       {ex.tags.map(t => (
-                        <span key={t} className="text-xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">
+                        <span key={t} className={styles.tag}>
                           {t}
                         </span>
                       ))}
                     </div>
                   </div>
                 </div>
-                <span className="text-xs text-gray-500 bg-gray-700 px-2 py-0.5 rounded-lg flex-shrink-0">
+                <span className={styles.setsBadge}>
                   {pe.sets} sets
                 </span>
               </div>
               {prev && prev.date < todayDate ? (
-                <p className="text-xs text-gray-600 mb-3">
+                <p className={styles.lastLog}>
                   Last: {prev.sets.map((s, i) => `S${i + 1} ${s.reps}r×${s.weight}lb`).join("  ")}
                 </p>
               ) : (
-                <div className="mb-3" />
+                <div className={styles.spacer} />
               )}
-              <div className="space-y-2">
+              <div className={styles.setsContainer}>
                 {sets.map((s, i) => (
                   <div key={i} style={{ display: "grid", gridTemplateColumns: cols, alignItems: "center", gap: "4px" }}>
-                    <span className="text-xs text-gray-500 whitespace-nowrap">S{i + 1}</span>
+                    <span className={styles.setLabel}>S{i + 1}</span>
                     <div />
-                    <div className="flex items-center gap-1 min-w-0">
+                    <div className={styles.inputGroup}>
                       <input
                         type="text"
                         inputMode="numeric"
                         value={s.reps}
                         onChange={e => upd(pe.id, i, "reps", e.target.value.replace(/[^0-9]/g, ""))}
                         placeholder="0"
-                        className="bg-gray-700 rounded-lg py-1.5 text-sm pr-1.5 outline-none focus:ring-1 focus:ring-orange-500 w-full min-w-0"
+                        className={styles.input}
                         style={{ textAlign: "right" }}
                       />
-                      <span className="text-gray-500 text-xs whitespace-nowrap">reps</span>
+                      <span className={styles.inputLabel}>reps</span>
                     </div>
-                    <span className="text-gray-500 text-sm text-center">×</span>
-                    <div className="flex items-center gap-1 min-w-0">
+                    <span className={styles.multiplier}>×</span>
+                    <div className={styles.inputGroup}>
                       <input
                         type="text"
                         inputMode="decimal"
                         value={s.weight}
                         onChange={e => upd(pe.id, i, "weight", e.target.value.replace(/[^0-9.]/g, ""))}
                         placeholder="0"
-                        className="bg-gray-700 rounded-lg py-1.5 text-sm pr-1.5 outline-none focus:ring-1 focus:ring-orange-500 w-full min-w-0"
+                        className={styles.input}
                         style={{ textAlign: "right" }}
                       />
-                      <span className="text-gray-500 text-xs whitespace-nowrap">lbs</span>
+                      <span className={styles.inputLabel}>lbs</span>
                     </div>
                   </div>
                 ))}

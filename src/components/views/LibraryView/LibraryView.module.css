@@ -1,0 +1,5 @@
+/* LibraryView Styles */
+
+.exerciseList {
+  @apply space-y-2;
+}

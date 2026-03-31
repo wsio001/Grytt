@@ -1,0 +1,41 @@
+/* MuscleTagSelector Styles */
+
+.container {
+  @apply relative mb-3;
+}
+
+.collapsedButton {
+  @apply flex items-center gap-2 text-sm bg-gray-700 text-gray-300 px-3 py-2 rounded-lg hover:bg-gray-600 transition-colors;
+}
+
+.backdrop {
+  @apply fixed inset-0 z-10;
+}
+
+.dropdown {
+  @apply absolute top-full left-0 mt-1 bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-2 z-20 max-h-48 overflow-y-auto min-w-[200px];
+}
+
+.dropdownButton {
+  @apply w-full text-left text-sm px-3 py-2 rounded hover:bg-gray-700 text-white transition-colors;
+}
+
+.normalContainer {
+  @apply relative;
+}
+
+.label {
+  @apply text-sm text-gray-500 mb-2;
+}
+
+.tagContainer {
+  @apply flex flex-wrap gap-1 mb-3;
+}
+
+.tag {
+  @apply flex items-center gap-1 text-xs bg-orange-500 text-white px-2 py-1 rounded-full hover:bg-orange-600 transition-colors;
+}
+
+.addButton {
+  @apply flex items-center gap-1 text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded-full hover:bg-gray-600 transition-colors;
+}

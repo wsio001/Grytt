@@ -1,0 +1,9 @@
+/* MuscleCategorySection Styles */
+
+.categoryTitle {
+  @apply text-xs font-semibold uppercase tracking-wider text-orange-400 mb-2;
+}
+
+.muscleGrid {
+  @apply grid grid-cols-2 gap-2;
+}

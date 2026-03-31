@@ -1,46 +1,42 @@
 import { GripVertical, Plus, Minus, Trash2 } from "lucide-react";
 import DropZone from "./DropZone";
+import styles from "./styles/PlannerWorkoutCard.module.css";
 
 export default function PlannerWorkoutCard({
   row,
   rowIndex,
   activeDay,
   exMap,
-  isMobile,
-  isDragging,
-  isDraggingMobile,
-  drag,
-  updSets,
-  remPe,
-  dispatchDrag,
-  resetDrag,
-  handleDrop,
-  handleTouchStart,
-  handleTouchEnd,
-  handleTouchMove
+  dragState,
+  workoutHandlers,
+  dragHandlers
 }) {
+  const { isMobile, isDragging, isDraggingMobile, drag } = dragState;
+  const { updSets, remPe } = workoutHandlers;
+  const { dispatchDrag, resetDrag, handleDrop, handleTouchStart, handleTouchEnd, handleTouchMove } = dragHandlers;
+
   const isSuperset = row.length > 1;
   const isDraggingThisRow = isMobile && drag.srcRow === rowIndex && drag.src === activeDay && isDraggingMobile;
 
   return (
     <div>
       {/* Superset container with visual grouping */}
-      <div className={`${isMobile && isSuperset ? "relative bg-gray-900 rounded-lg p-2 border-2 border-orange-500/30" : ""}`}>
+      <div className={isMobile && isSuperset ? styles.supersetContainer : ""}>
         {isMobile && isSuperset && (
-          <div className="absolute -left-1 top-0 bottom-0 w-1 bg-orange-500 rounded-l"></div>
+          <div className={styles.supersetIndicator}></div>
         )}
         {isMobile && isSuperset && (
-          <div className="flex items-center gap-1 mb-2 px-1">
+          <div className={styles.supersetHeader}>
             <GripVertical size={12} className="text-orange-500" />
-            <span className="text-xs font-bold text-orange-400 uppercase tracking-wide">Superset</span>
+            <span className={styles.supersetLabel}>Superset</span>
           </div>
         )}
-        <div className={`flex gap-2 ${isMobile && isSuperset ? "flex-col" : ""} ${isDraggingThisRow ? "opacity-50" : ""}`}>
+        <div className={`${isMobile && isSuperset ? styles.cardRowMobile : styles.cardRow} ${isDraggingThisRow ? styles.cardRowDragging : ""}`}>
           {row.map((pe, peIndex) => {
             const ex = exMap.get(pe.exerciseId);
             if (!ex) {
               return (
-                <div key={pe.id} className="flex-1 bg-gray-800 rounded-lg p-2 text-xs text-gray-600 italic">
+                <div key={pe.id} className={styles.unknownExercise}>
                   Unknown
                 </div>
               );
@@ -54,27 +50,27 @@ export default function PlannerWorkoutCard({
                 onTouchStart={() => isMobile && handleTouchStart(pe, activeDay, rowIndex)}
                 onTouchEnd={handleTouchEnd}
                 onTouchMove={handleTouchMove}
-                className={`${isMobile && isSuperset ? "w-full" : "flex-1"} bg-gray-800 rounded-lg p-2 transition-all ${!isMobile || isDraggingMobile ? "cursor-grab active:cursor-grabbing" : ""}`}>
-                <div className="flex items-center gap-1.5">
-                  {!isMobile && <GripVertical size={11} className="text-gray-500 flex-shrink-0" />}
+                className={`${isMobile && isSuperset ? styles.exerciseCardMobile : styles.exerciseCard} ${!isMobile || isDraggingMobile ? styles.exerciseCardDraggable : ""}`}>
+                <div className={styles.exerciseHeader}>
+                  {!isMobile && <GripVertical size={11} className={styles.gripIcon} />}
                   {isMobile && isSuperset && (
-                    <span className="text-xs text-orange-400 font-bold mr-1">{peIndex + 1}</span>
+                    <span className={styles.supersetNumber}>{peIndex + 1}</span>
                   )}
-                  <span className="flex-1 text-xs font-medium truncate">{ex.name}</span>
+                  <span className={styles.exerciseName}>{ex.name}</span>
                   <button
                     onClick={() => updSets(activeDay, rowIndex, pe.id, -1)}
-                    className="p-0.5 bg-gray-700 rounded hover:bg-gray-600">
+                    className={styles.button}>
                     <Minus size={10} />
                   </button>
-                  <span className="w-4 text-center text-orange-400 font-bold text-xs">{pe.sets}</span>
+                  <span className={styles.setsCount}>{pe.sets}</span>
                   <button
                     onClick={() => updSets(activeDay, rowIndex, pe.id, 1)}
-                    className="p-0.5 bg-gray-700 rounded hover:bg-gray-600">
+                    className={styles.button}>
                     <Plus size={10} />
                   </button>
                   <button
                     onClick={() => remPe(activeDay, rowIndex, pe.id)}
-                    className="p-0.5 text-red-400 rounded hover:bg-red-500/20 ml-0.5">
+                    className={styles.deleteButton}>
                     <Trash2 size={10} />
                   </button>
                 </div>
@@ -86,7 +82,7 @@ export default function PlannerWorkoutCard({
               active={true}
               highlight={drag.overRow === rowIndex && drag.overPos === "superset"}
               label="Superset"
-              className={isMobile && row.length > 1 ? "w-full mt-2" : "flex-1"}
+              className={isMobile && row.length > 1 ? styles.dropZoneSupersetMobile : styles.dropZoneSuperset}
               onOver={() => dispatchDrag({ type: "OVER", row: rowIndex, pos: "superset" })}
               onLeave={() => dispatchDrag({ type: "OVER", row: null, pos: null })}
               onDrop={() => handleDrop(activeDay, rowIndex, "superset")}
@@ -99,7 +95,7 @@ export default function PlannerWorkoutCard({
           active={true}
           highlight={drag.overRow === rowIndex && drag.overPos === "new-row"}
           label="New row"
-          className="h-8 mt-2"
+          className={styles.dropZoneNewRow}
           onOver={() => dispatchDrag({ type: "OVER", row: rowIndex, pos: "new-row" })}
           onLeave={() => dispatchDrag({ type: "OVER", row: null, pos: null })}
           onDrop={() => handleDrop(activeDay, rowIndex, "new-row")}

@@ -1,10 +1,10 @@
 import { Plus, X } from "lucide-react";
-import styles from "./styles/LibraryHeader.module.css";
+import styles from "./styles/SettingsHeader.module.css";
 
-export default function LibraryHeader({ showAdd, onToggleAdd }) {
+export default function SettingsHeader({ showAdd, onToggleAdd }) {
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Exercise Library</h2>
+      <h2 className={styles.title}>Muscle Groups</h2>
       <button
         onClick={onToggleAdd}
         className={`${styles.button} ${showAdd ? styles.buttonClose : styles.buttonAdd}`}>

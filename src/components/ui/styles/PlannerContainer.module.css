@@ -1,0 +1,65 @@
+/* PlannerContainer Styles */
+
+.container {
+  @apply bg-gray-900 rounded-xl p-3 flex-1 transition-all;
+}
+
+.containerDragging {
+  @apply ring-2 ring-orange-500/40;
+}
+
+.header {
+  @apply flex items-center justify-between mb-3;
+}
+
+.title {
+  @apply text-sm font-semibold text-orange-400;
+}
+
+.nameEditor {
+  @apply flex items-center gap-1.5;
+}
+
+.nameInput {
+  @apply bg-gray-800 rounded-lg px-2 py-1 text-xs text-white placeholder-gray-600 outline-none focus:ring-1 focus:ring-orange-500 w-32;
+}
+
+.confirmButton {
+  @apply p-1 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30;
+}
+
+.nameDisplay {
+  @apply text-xs text-white font-medium;
+}
+
+.nameDisplayUnnamed {
+  @apply text-xs text-gray-600;
+}
+
+.editButton {
+  @apply p-1 bg-gray-800 text-gray-400 rounded-lg hover:bg-gray-700;
+}
+
+.emptyState {
+  @apply rounded-lg border-2 border-dashed flex items-center justify-center py-10 transition-all;
+}
+
+.emptyStateDragging {
+  @apply border-orange-500/50 bg-orange-500/5;
+}
+
+.emptyStateDefault {
+  @apply border-gray-800;
+}
+
+.emptyText {
+  @apply text-gray-600 text-sm;
+}
+
+.workoutList {
+  @apply space-y-2;
+}
+
+.dropZone {
+  @apply h-8;
+}

@@ -1,4 +1,5 @@
 import { GripVertical, Check, ChevronDown, ChevronUp } from "lucide-react";
+import styles from "./styles/ExerciseLibrarySidebar.module.css";
 
 export default function ExerciseLibrarySidebar({
   libGrouped,
@@ -10,17 +11,17 @@ export default function ExerciseLibrarySidebar({
   resetDrag
 }) {
   return (
-    <div className="bg-gray-900 rounded-xl p-3 overflow-y-auto" style={{ width: "30%", flexShrink: 0, maxHeight: 520 }}>
-      <p className="text-xs font-semibold text-orange-400 sticky top-0 bg-gray-900 py-1 mb-2">Library</p>
-      <div className="space-y-2">
+    <div className={styles.sidebar} style={{ width: "30%", flexShrink: 0, maxHeight: 520 }}>
+      <p className={styles.title}>Library</p>
+      <div className={styles.categoryList}>
         {Object.entries(libGrouped).map(([cat, exs]) => {
           if (!exs.length) return null;
           return (
-            <div key={cat} className="rounded-lg overflow-hidden bg-gray-800">
+            <div key={cat} className={styles.categoryCard}>
               <div
-                className="px-2 py-1.5 flex items-center justify-between cursor-pointer"
+                className={styles.categoryHeader}
                 onClick={() => setLibCats(p => ({ ...p, [cat]: !p[cat] }))}>
-                <span className="text-xs font-medium text-white">{cat}</span>
+                <span className={styles.categoryName}>{cat}</span>
                 {libCats[cat] ? (
                   <ChevronUp size={12} className="text-gray-400" />
                 ) : (
@@ -28,7 +29,7 @@ export default function ExerciseLibrarySidebar({
                 )}
               </div>
               {libCats[cat] && (
-                <div className="p-1.5 space-y-1 bg-gray-900">
+                <div className={styles.exerciseList}>
                   {exs.map(ex => {
                     const inDay = (plan[activeDay] || []).flat().some(pe => pe.exerciseId === ex.id);
                     return (
@@ -37,14 +38,14 @@ export default function ExerciseLibrarySidebar({
                         draggable={!inDay}
                         onDragStart={() => dispatchDrag({ type: "START_LIB", ex })}
                         onDragEnd={resetDrag}
-                        className={`flex items-center gap-1.5 rounded px-2 py-1.5 select-none text-xs transition-colors ${
+                        className={`${styles.exerciseItem} ${
                           inDay
-                            ? "opacity-40 cursor-default bg-gray-800"
-                            : "bg-gray-800 hover:bg-gray-700 cursor-grab active:cursor-grabbing"
+                            ? styles.exerciseItemDisabled
+                            : styles.exerciseItemActive
                         }`}>
-                        <GripVertical size={12} className="text-gray-500 flex-shrink-0" />
-                        <span className="truncate flex-1">{ex.name}</span>
-                        {inDay && <Check size={10} className="text-gray-500" />}
+                        <GripVertical size={12} className={styles.gripIcon} />
+                        <span className={styles.exerciseName}>{ex.name}</span>
+                        {inDay && <Check size={10} className={styles.checkIcon} />}
                       </div>
                     );
                   })}

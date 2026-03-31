@@ -1,0 +1,97 @@
+/* WorkoutProgressCard Styles */
+
+.card {
+  @apply bg-gray-900 rounded-xl p-4 border-2 border-gray-800;
+}
+
+.supersetHeader {
+  @apply flex items-center gap-2 mb-3;
+}
+
+.supersetLine {
+  @apply h-1 w-8 bg-orange-500 rounded-full;
+}
+
+.supersetLineEnd {
+  @apply flex-1 h-1 bg-orange-500 rounded-full;
+}
+
+.supersetLabel {
+  @apply text-xs text-orange-400 font-semibold uppercase tracking-widest;
+}
+
+.supersetContent {
+  @apply space-y-3;
+}
+
+.exerciseCard {
+  @apply bg-gray-800 rounded-lg p-3;
+}
+
+.unknownExercise {
+  @apply bg-gray-800 rounded-lg p-3 text-xs text-gray-600 italic;
+}
+
+.exerciseHeader {
+  @apply flex justify-between items-start mb-1;
+}
+
+.exerciseInfo {
+  @apply flex items-start gap-2 flex-1;
+}
+
+.supersetBadge {
+  @apply text-xs font-bold text-orange-400 bg-orange-500/20 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5;
+}
+
+.exerciseDetails {
+  @apply flex-1 min-w-0;
+}
+
+.exerciseName {
+  @apply font-semibold;
+}
+
+.tagContainer {
+  @apply flex flex-wrap gap-1 mt-1;
+}
+
+.tag {
+  @apply text-xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full;
+}
+
+.setsBadge {
+  @apply text-xs text-gray-500 bg-gray-700 px-2 py-0.5 rounded-lg flex-shrink-0;
+}
+
+.lastLog {
+  @apply text-xs text-gray-600 mb-3;
+}
+
+.spacer {
+  @apply mb-3;
+}
+
+.setsContainer {
+  @apply space-y-2;
+}
+
+.setLabel {
+  @apply text-xs text-gray-500 whitespace-nowrap;
+}
+
+.inputGroup {
+  @apply flex items-center gap-1 min-w-0;
+}
+
+.input {
+  @apply bg-gray-700 rounded-lg py-1.5 text-sm pr-1.5 outline-none focus:ring-1 focus:ring-orange-500 w-full min-w-0;
+}
+
+.inputLabel {
+  @apply text-gray-500 text-xs whitespace-nowrap;
+}
+
+.multiplier {
+  @apply text-gray-500 text-sm text-center;
+}

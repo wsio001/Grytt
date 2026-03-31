@@ -1,0 +1,117 @@
+/* ExerciseLibraryModal Styles */
+
+.fab {
+  @apply fixed bottom-20 right-4 w-14 h-14 bg-orange-500 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-orange-600 transition-colors z-40;
+}
+
+.overlay {
+  @apply fixed inset-0 bg-black/50 z-50 flex items-end;
+}
+
+.modal {
+  @apply bg-gray-900 w-full rounded-t-2xl max-h-[80vh] flex flex-col;
+}
+
+.modalHeader {
+  @apply flex items-center justify-between p-4 border-b border-gray-800;
+}
+
+.modalTitle {
+  @apply text-lg font-semibold text-white;
+}
+
+.closeButton {
+  @apply p-2 hover:bg-gray-800 rounded-lg;
+}
+
+.modalContent {
+  @apply overflow-y-auto p-4 space-y-2;
+}
+
+.categoryCard {
+  @apply rounded-lg overflow-hidden bg-gray-800;
+}
+
+.categoryHeader {
+  @apply px-3 py-2 flex items-center justify-between cursor-pointer;
+}
+
+.categoryName {
+  @apply text-sm font-medium text-white;
+}
+
+.exerciseList {
+  @apply p-2 space-y-1 bg-gray-900;
+}
+
+.exerciseButton {
+  @apply w-full flex items-center gap-2 rounded px-3 py-2.5 text-sm transition-colors;
+}
+
+.exerciseButtonDisabled {
+  @apply opacity-40 cursor-not-allowed bg-gray-800;
+}
+
+.exerciseButtonActive {
+  @apply bg-gray-800 hover:bg-gray-700 active:bg-gray-600;
+}
+
+.exerciseName {
+  @apply truncate flex-1 text-left;
+}
+
+.checkIcon {
+  @apply text-gray-500;
+}
+
+.contextMenuOverlay {
+  @apply fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4;
+}
+
+.contextMenu {
+  @apply bg-gray-900 rounded-xl w-full max-w-sm;
+}
+
+.contextMenuHeader {
+  @apply p-4 border-b border-gray-800;
+}
+
+.contextMenuTitle {
+  @apply font-semibold text-white;
+}
+
+.contextMenuContent {
+  @apply p-2;
+}
+
+.contextMenuItem {
+  @apply w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-800 rounded-lg transition-colors;
+}
+
+.sectionLabel {
+  @apply px-4 py-2;
+}
+
+.sectionLabelText {
+  @apply text-xs text-gray-500 uppercase tracking-wide;
+}
+
+.rowInfo {
+  @apply flex-1;
+}
+
+.rowName {
+  @apply text-sm text-white;
+}
+
+.rowNumber {
+  @apply text-xs text-gray-500;
+}
+
+.contextMenuFooter {
+  @apply p-2 border-t border-gray-800;
+}
+
+.cancelButton {
+  @apply w-full py-2.5 text-sm text-gray-400 hover:text-white transition-colors;
+}

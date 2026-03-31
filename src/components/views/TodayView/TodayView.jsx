@@ -1,7 +1,8 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { Dumbbell, Check, Save } from "lucide-react";
-import { todayDay, todayFullName, todayStr } from "../constants";
-import WorkoutProgressCard from "./ui/WorkoutProgressCard";
+import { todayDay, todayFullName, todayStr } from "../../../constants";
+import WorkoutProgressCard from "../../ui/WorkoutProgressCard";
+import styles from "./TodayView.module.css";
 
 export default function TodayView({ exMap, plan, logs, setLogs }) {
   const today = todayDay(), date = todayStr();
@@ -52,16 +53,16 @@ export default function TodayView({ exMap, plan, logs, setLogs }) {
   }, [rows, inputs, date, setLogs]);
 
   if (!rows.length) return (
-    <div className="flex flex-col items-center justify-center py-24 text-gray-600">
-      <Dumbbell size={44} className="mb-4 opacity-20" />
-      <p className="font-medium">No workout planned for {todayFullName()}</p>
-      <p className="text-sm mt-1">Set up your week in the Planner tab</p>
+    <div className={styles.emptyState}>
+      <Dumbbell size={44} className={styles.emptyIcon} />
+      <p className={styles.emptyTitle}>No workout planned for {todayFullName()}</p>
+      <p className={styles.emptySubtitle}>Set up your week in the Planner tab</p>
     </div>
   );
 
   return (
-    <div className="space-y-4 pb-24">
-      <p className="text-gray-500 text-sm">{todayFullName()} · {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric" })}</p>
+    <div className={styles.container}>
+      <p className={styles.dateHeader}>{todayFullName()} · {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric" })}</p>
       {rows.map((row, ri) => (
         <WorkoutProgressCard
           key={ri}
@@ -73,8 +74,9 @@ export default function TodayView({ exMap, plan, logs, setLogs }) {
           onUpdate={upd}
         />
       ))}
-      <button onClick={saveAll}
-        className={`fixed bottom-20 left-4 right-4 font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg z-40 ${saved ? "bg-green-500/20 text-green-400 border-2 border-green-500" : "bg-orange-500 hover:bg-orange-600 text-white"}`}>
+      <button
+        onClick={saveAll}
+        className={`${styles.saveButton} ${saved ? styles.saveButtonSaved : styles.saveButtonDefault}`}>
         {saved ? <><Check size={20} />Saved!</> : <><Save size={20} />Save Today's Progress</>}
       </button>
     </div>

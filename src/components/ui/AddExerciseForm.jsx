@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import MuscleTagSelector from "./MuscleTagSelector";
+import styles from "./styles/AddExerciseForm.module.css";
 
 export default function AddExerciseForm({
   newName,
@@ -16,14 +17,14 @@ export default function AddExerciseForm({
   };
 
   return (
-    <div className="bg-gray-900 rounded-xl p-4 mb-4 ring-1 ring-orange-500/30">
-      <p className="font-medium mb-3">Add New Exercise</p>
+    <div className={styles.form}>
+      <p className={styles.title}>Add New Exercise</p>
       <input
         value={newName}
         onChange={e => setNewName(e.target.value)}
         onKeyDown={e => e.key === "Enter" && newTags.length && onPreview()}
         placeholder="Exercise name"
-        className="w-full bg-gray-800 rounded-lg px-3 py-2 mb-3 text-white placeholder-gray-600 outline-none focus:ring-1 focus:ring-orange-500"
+        className={styles.input}
       />
       <MuscleTagSelector
         selectedTags={newTags}
@@ -34,7 +35,7 @@ export default function AddExerciseForm({
       <button
         onClick={onPreview}
         disabled={!newName.trim() || !newTags.length}
-        className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
+        className={styles.submitButton}>
         <Plus size={18} /> Preview &amp; Add
       </button>
     </div>

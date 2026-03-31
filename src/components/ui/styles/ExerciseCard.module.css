@@ -1,0 +1,53 @@
+/* ExerciseCard Styles */
+
+.card {
+  @apply bg-gray-900 rounded-xl p-4;
+}
+
+.editInput {
+  @apply w-full bg-gray-800 rounded-lg px-3 py-2 mb-3 text-white outline-none focus:ring-1 focus:ring-orange-500;
+}
+
+.buttonContainer {
+  @apply flex gap-2;
+}
+
+.saveButton {
+  @apply flex-1 bg-green-500/20 text-green-400 hover:bg-green-500/30 py-2 rounded-lg flex items-center justify-center gap-1;
+}
+
+.cancelButton {
+  @apply flex-1 bg-gray-800 text-gray-400 hover:bg-gray-700 py-2 rounded-lg flex items-center justify-center gap-1;
+}
+
+.viewContainer {
+  @apply flex items-center justify-between;
+}
+
+.exerciseInfo {
+  @apply flex-1 min-w-0 text-left;
+}
+
+.exerciseName {
+  @apply font-medium text-white;
+}
+
+.tagContainer {
+  @apply flex flex-wrap gap-1 mt-1;
+}
+
+.tag {
+  @apply text-xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full;
+}
+
+.actionContainer {
+  @apply flex gap-2 ml-2 flex-shrink-0;
+}
+
+.editButton {
+  @apply p-2 bg-gray-800 rounded-lg hover:bg-gray-700;
+}
+
+.deleteButton {
+  @apply p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20;
+}

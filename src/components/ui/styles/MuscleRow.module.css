@@ -1,0 +1,25 @@
+/* MuscleRow Styles */
+
+.row {
+  @apply bg-gray-900 rounded-xl px-3 py-2.5 flex items-center justify-between;
+}
+
+.muscleName {
+  @apply text-sm font-medium;
+}
+
+.controls {
+  @apply flex items-center gap-1.5;
+}
+
+.button {
+  @apply p-1 bg-gray-800 rounded hover:bg-gray-700;
+}
+
+.goalValue {
+  @apply w-6 text-center text-orange-400 font-bold text-sm;
+}
+
+.deleteButton {
+  @apply p-1 text-red-400 rounded hover:bg-red-500/20 ml-0.5;
+}

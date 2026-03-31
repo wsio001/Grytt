@@ -1,0 +1,21 @@
+/* LibraryHeader Styles */
+
+.container {
+  @apply flex justify-between items-center mb-4;
+}
+
+.title {
+  @apply text-lg font-semibold;
+}
+
+.button {
+  @apply p-2 rounded-lg transition-colors;
+}
+
+.buttonClose {
+  @apply bg-red-500/20 text-red-400;
+}
+
+.buttonAdd {
+  @apply bg-orange-500 text-white hover:bg-orange-600;
+}

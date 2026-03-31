@@ -1,11 +1,12 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
-import MuscleCounterCard from "./ui/MuscleCounterCard";
-import DateSelector from "./ui/DateSelector";
-import ExerciseLibrarySidebar from "./ui/ExerciseLibrarySidebar";
-import ExerciseLibraryModal from "./ui/ExerciseLibraryModal";
-import PlannerContainer from "./ui/PlannerContainer";
-import { useDragReducer } from "../hooks/useDragReducer";
-import { DAYS, DAYS_FULL, uid } from "../constants";
+import MuscleCounterCard from "../../ui/MuscleCounterCard";
+import DateSelector from "../../ui/DateSelector";
+import ExerciseLibrarySidebar from "../../ui/ExerciseLibrarySidebar";
+import ExerciseLibraryModal from "../../ui/ExerciseLibraryModal";
+import PlannerContainer from "../../ui/PlannerContainer";
+import { useDragReducer } from "../../../hooks/useDragReducer";
+import { DAYS, DAYS_FULL, uid } from "../../../constants";
+import styles from "./PlannerView.module.css";
 
 export default function PlannerView({ exMap, exercises, plan, setPlan, goals, muscleCats, activeDay, setActiveDay, dayNames, setDayNames }) {
   const [drag, dispatchDrag] = useDragReducer();
@@ -162,20 +163,20 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
 
   return (
     <div>
-      <div className="bg-gray-900 rounded-xl p-4 mb-4">
-        <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Weekly Volume</p>
+      <div className={styles.volumeSection}>
+        <p className={styles.volumeTitle}>Weekly Volume</p>
         {isMobile ? (
           // Mobile: Carousel mode (2 cards visible, scroll for more)
-          <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-thin -mx-4 px-4">
+          <div className={styles.carouselContainer}>
             {Object.entries(muscleCats).map(([cat, muscles]) => (
-              <div key={cat} className="flex-shrink-0 snap-start" style={{ width: "calc(50% - 4px)", minWidth: "140px" }}>
+              <div key={cat} className={styles.carouselItem}>
                 <MuscleCounterCard category={cat} muscles={muscles} vol={vol} goals={goals} />
               </div>
             ))}
           </div>
         ) : (
           // Desktop: Grid layout (all 6 cards visible)
-          <div className="grid grid-cols-6 gap-2">
+          <div className={styles.gridContainer}>
             {Object.entries(muscleCats).map(([cat, muscles]) => (
               <MuscleCounterCard key={cat} category={cat} muscles={muscles} vol={vol} goals={goals} />
             ))}
@@ -209,28 +210,14 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
         )}
 
         <PlannerContainer
-          isMobile={isMobile}
-          isDragging={isDragging}
-          isDraggingMobile={isDraggingMobile}
           activeDay={activeDay}
           fullDayName={fullDayName}
-          editingName={editingName}
-          setEditingName={setEditingName}
-          nameDraft={nameDraft}
-          setNameDraft={setNameDraft}
-          confirmName={confirmName}
-          dayNames={dayNames}
           plan={plan}
-          handleDrop={handleDrop}
-          drag={drag}
-          dispatchDrag={dispatchDrag}
           exMap={exMap}
-          updSets={updSets}
-          remPe={remPe}
-          resetDrag={resetDrag}
-          handleTouchStart={handleTouchStart}
-          handleTouchEnd={handleTouchEnd}
-          handleTouchMove={handleTouchMove}
+          dragState={{ isMobile, isDragging, isDraggingMobile, drag }}
+          nameEditor={{ editingName, setEditingName, nameDraft, setNameDraft, confirmName, dayNames }}
+          workoutHandlers={{ updSets, remPe }}
+          dragHandlers={{ dispatchDrag, resetDrag, handleDrop, handleTouchStart, handleTouchEnd, handleTouchMove }}
         />
       </div>
 
