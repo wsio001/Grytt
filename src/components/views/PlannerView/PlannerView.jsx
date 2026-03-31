@@ -218,6 +218,7 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
           nameEditor={{ editingName, setEditingName, nameDraft, setNameDraft, confirmName, dayNames }}
           workoutHandlers={{ updSets, remPe }}
           dragHandlers={{ dispatchDrag, resetDrag, handleDrop, handleTouchStart, handleTouchEnd, handleTouchMove }}
+          onEmptyClick={isMobile ? () => setShowLibrary(true) : undefined}
         />
       </div>
 

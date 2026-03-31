@@ -52,6 +52,10 @@
   @apply border-gray-800;
 }
 
+.emptyStateClickable {
+  @apply cursor-pointer hover:border-orange-500/30 hover:bg-orange-500/5 active:bg-orange-500/10;
+}
+
 .emptyText {
   @apply text-gray-600 text-sm;
 }

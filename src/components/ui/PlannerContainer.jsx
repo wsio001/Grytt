@@ -12,7 +12,8 @@ export default function PlannerContainer({
   dragState,
   nameEditor,
   workoutHandlers,
-  dragHandlers
+  dragHandlers,
+  onEmptyClick
 }) {
   const { isMobile, isDragging, isDraggingMobile, drag } = dragState;
   const { editingName, setEditingName, nameDraft, setNameDraft, confirmName, dayNames } = nameEditor;
@@ -65,11 +66,12 @@ export default function PlannerContainer({
 
       {!(plan[activeDay] || []).length && (
         <div
+          onClick={onEmptyClick}
           className={`${styles.emptyState} ${
             !isMobile && isDragging ? styles.emptyStateDragging : styles.emptyStateDefault
-          }`}>
+          } ${onEmptyClick ? styles.emptyStateClickable : ""}`}>
           <span className={styles.emptyText}>
-            {isMobile ? "Tap + to add exercises" : "Drag exercises here"}
+            {isMobile ? "Tap here or + to add exercises" : "Drag exercises here"}
           </span>
         </div>
       )}
