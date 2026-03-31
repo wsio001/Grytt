@@ -1,7 +1,10 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { GripVertical, Plus, Minus, Trash2, Check, Edit2, ChevronDown, ChevronUp, X } from "lucide-react";
-import DropZone from "./DropZone";
-import { useDragReducer, DRAG_INIT } from "../hooks/useDragReducer";
+import MuscleCounterCard from "./ui/MuscleCounterCard";
+import DateSelector from "./ui/DateSelector";
+import ExerciseLibrarySidebar from "./ui/ExerciseLibrarySidebar";
+import ExerciseLibraryModal from "./ui/ExerciseLibraryModal";
+import PlannerContainer from "./ui/PlannerContainer";
+import { useDragReducer } from "../hooks/useDragReducer";
 import { DAYS, DAYS_FULL, uid } from "../constants";
 
 export default function PlannerView({ exMap, exercises, plan, setPlan, goals, muscleCats, activeDay, setActiveDay, dayNames, setDayNames }) {
@@ -165,19 +168,8 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
           // Mobile: Carousel mode (2 cards visible, scroll for more)
           <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-thin -mx-4 px-4">
             {Object.entries(muscleCats).map(([cat, muscles]) => (
-              <div key={cat} className="bg-gray-800 rounded-lg p-2 flex-shrink-0 snap-start" style={{ width: "calc(50% - 4px)", minWidth: "140px" }}>
-                <p className="text-xs font-semibold text-white mb-2 text-center">{cat}</p>
-                <div className="space-y-1">
-                  {muscles.filter(m => m in goals).map(muscle => {
-                    const curr = vol[muscle] || 0, tgt = goals[muscle] || 0, done = tgt > 0 && curr >= tgt;
-                    return (
-                      <div key={muscle} className={`text-xs px-1 py-0.5 rounded text-center leading-tight ${done ? "bg-green-500/20 text-green-400" : curr > 0 ? "bg-orange-500/20 text-orange-400" : "bg-gray-700 text-gray-500"}`}>
-                        <div className="truncate">{muscle}</div>
-                        <div className="font-semibold">{curr}{tgt > 0 ? `/${tgt}` : "—"}</div>
-                      </div>
-                    );
-                  })}
-                </div>
+              <div key={cat} className="flex-shrink-0 snap-start" style={{ width: "calc(50% - 4px)", minWidth: "140px" }}>
+                <MuscleCounterCard category={cat} muscles={muscles} vol={vol} goals={goals} />
               </div>
             ))}
           </div>
@@ -185,281 +177,80 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
           // Desktop: Grid layout (all 6 cards visible)
           <div className="grid grid-cols-6 gap-2">
             {Object.entries(muscleCats).map(([cat, muscles]) => (
-              <div key={cat} className="bg-gray-800 rounded-lg p-2">
-                <p className="text-xs font-semibold text-white mb-2 text-center">{cat}</p>
-                <div className="space-y-1">
-                  {muscles.filter(m => m in goals).map(muscle => {
-                    const curr = vol[muscle] || 0, tgt = goals[muscle] || 0, done = tgt > 0 && curr >= tgt;
-                    return (
-                      <div key={muscle} className={`text-xs px-1 py-0.5 rounded text-center leading-tight ${done ? "bg-green-500/20 text-green-400" : curr > 0 ? "bg-orange-500/20 text-orange-400" : "bg-gray-700 text-gray-500"}`}>
-                        <div className="truncate">{muscle}</div>
-                        <div className="font-semibold">{curr}{tgt > 0 ? `/${tgt}` : "—"}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              <MuscleCounterCard key={cat} category={cat} muscles={muscles} vol={vol} goals={goals} />
             ))}
           </div>
         )}
       </div>
 
-      <div className="flex gap-1 mb-4">
-        {DAYS.map(day => (
-          <button key={day} onClick={() => setActiveDay(day)}
-            className={`flex-1 py-1.5 text-center rounded-lg text-sm font-medium transition-colors ${activeDay === day ? "bg-orange-500 text-white" : "bg-gray-900 text-gray-400 hover:bg-gray-800"}`}>
-            <div>{day}</div>
-            <div className={`text-xs truncate mt-0.5 ${activeDay === day ? "text-orange-200" : "text-gray-600"}`}>{dayNames[day] || "Rest"}</div>
-          </button>
-        ))}
-      </div>
+      <DateSelector
+        activeDay={activeDay}
+        setActiveDay={setActiveDay}
+        dayNames={dayNames}
+        editingName={editingName}
+        setEditingName={setEditingName}
+        nameDraft={nameDraft}
+        setNameDraft={setNameDraft}
+        confirmName={confirmName}
+      />
 
       <div className={isMobile ? "" : "flex gap-3"}>
         {/* Desktop: Side-by-side library */}
         {!isMobile && (
-          <div className="bg-gray-900 rounded-xl p-3 overflow-y-auto" style={{ width: "30%", flexShrink: 0, maxHeight: 520 }}>
-            <p className="text-xs font-semibold text-orange-400 sticky top-0 bg-gray-900 py-1 mb-2">Library</p>
-            <div className="space-y-2">
-              {Object.entries(libGrouped).map(([cat, exs]) => {
-                if (!exs.length) return null;
-                return (
-                  <div key={cat} className="rounded-lg overflow-hidden bg-gray-800">
-                    <div className="px-2 py-1.5 flex items-center justify-between cursor-pointer" onClick={() => setLibCats(p => ({ ...p, [cat]: !p[cat] }))}>
-                      <span className="text-xs font-medium text-white">{cat}</span>
-                      {libCats[cat] ? <ChevronUp size={12} className="text-gray-400" /> : <ChevronDown size={12} className="text-gray-400" />}
-                    </div>
-                    {libCats[cat] && (
-                      <div className="p-1.5 space-y-1 bg-gray-900">
-                        {exs.map(ex => {
-                          const inDay = (plan[activeDay] || []).flat().some(pe => pe.exerciseId === ex.id);
-                          return (
-                            <div key={ex.id} draggable={!inDay}
-                              onDragStart={() => dispatchDrag({ type: "START_LIB", ex })}
-                              onDragEnd={resetDrag}
-                              className={`flex items-center gap-1.5 rounded px-2 py-1.5 select-none text-xs transition-colors ${inDay ? "opacity-40 cursor-default bg-gray-800" : "bg-gray-800 hover:bg-gray-700 cursor-grab active:cursor-grabbing"}`}>
-                              <GripVertical size={12} className="text-gray-500 flex-shrink-0" />
-                              <span className="truncate flex-1">{ex.name}</span>
-                              {inDay && <Check size={10} className="text-gray-500" />}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <ExerciseLibrarySidebar
+            libGrouped={libGrouped}
+            libCats={libCats}
+            setLibCats={setLibCats}
+            plan={plan}
+            activeDay={activeDay}
+            dispatchDrag={dispatchDrag}
+            resetDrag={resetDrag}
+          />
         )}
 
-        <div className={`bg-gray-900 rounded-xl p-3 flex-1 transition-all ${!isMobile && isDragging ? "ring-2 ring-orange-500/40" : ""}`}
-          style={{ minHeight: 400 }}
-          onDragOver={e => e.preventDefault()}
-          onDrop={e => { e.preventDefault(); if (!(plan[activeDay] || []).length) handleDrop(activeDay, -1, "new-row"); }}>
-
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-semibold text-orange-400">{fullDayName}'s Workout</p>
-            <div className="flex items-center gap-1.5">
-              {editingName ? (
-                <>
-                  <input autoFocus value={nameDraft} onChange={e => setNameDraft(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && confirmName()}
-                    placeholder="Upper, Push, Legs…"
-                    className="bg-gray-800 rounded-lg px-2 py-1 text-xs text-white placeholder-gray-600 outline-none focus:ring-1 focus:ring-orange-500 w-32" />
-                  <button onClick={confirmName} className="p-1 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30"><Check size={14} /></button>
-                </>
-              ) : (
-                <>
-                  <span className={`text-xs ${dayNames[activeDay] ? "text-white font-medium" : "text-gray-600"}`}>{dayNames[activeDay] || "Unnamed"}</span>
-                  <button onClick={() => { setNameDraft(dayNames[activeDay] || ""); setEditingName(true); }} className="p-1 bg-gray-800 text-gray-400 rounded-lg hover:bg-gray-700"><Edit2 size={13} /></button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {!(plan[activeDay] || []).length && (
-            <div className={`rounded-lg border-2 border-dashed flex items-center justify-center py-10 transition-all ${!isMobile && isDragging ? "border-orange-500/50 bg-orange-500/5" : "border-gray-800"}`}>
-              <span className="text-gray-600 text-sm">{isMobile ? "Tap + to add exercises" : "Drag exercises here"}</span>
-            </div>
-          )}
-
-          {(plan[activeDay] || []).length > 0 && (
-            <div className="space-y-2">
-              {((!isMobile && isDragging) || (isMobile && isDraggingMobile)) && (
-                <DropZone active={true} highlight={drag.overRow === -1 && drag.overPos === "new-row"}
-                  label="Insert here" className="h-8"
-                  onOver={() => dispatchDrag({ type: "OVER", row: -1, pos: "new-row" })}
-                  onLeave={() => dispatchDrag({ type: "OVER", row: null, pos: null })}
-                  onDrop={() => handleDrop(activeDay, -1, "new-row")} />
-              )}
-              {(plan[activeDay] || []).map((row, ri) => {
-                const isSuperset = row.length > 1;
-                const isDraggingThisRow = isMobile && drag.srcRow === ri && drag.src === activeDay && isDraggingMobile;
-
-                return (
-                  <div key={ri}>
-                    {/* Superset container with visual grouping */}
-                    <div className={`${isMobile && isSuperset ? "relative bg-gray-900 rounded-lg p-2 border-2 border-orange-500/30" : ""}`}>
-                      {isMobile && isSuperset && (
-                        <div className="absolute -left-1 top-0 bottom-0 w-1 bg-orange-500 rounded-l"></div>
-                      )}
-                      {isMobile && isSuperset && (
-                        <div className="flex items-center gap-1 mb-2 px-1">
-                          <GripVertical size={12} className="text-orange-500" />
-                          <span className="text-xs font-bold text-orange-400 uppercase tracking-wide">Superset</span>
-                        </div>
-                      )}
-                      <div className={`flex gap-2 ${isMobile && isSuperset ? "flex-col" : ""} ${isDraggingThisRow ? "opacity-50" : ""}`}>
-                        {row.map((pe, peIndex) => {
-                          const ex = exMap.get(pe.exerciseId);
-                          if (!ex) return <div key={pe.id} className="flex-1 bg-gray-800 rounded-lg p-2 text-xs text-gray-600 italic">Unknown</div>;
-                          return (
-                            <div key={pe.id}
-                              draggable={true}
-                              onDragStart={() => dispatchDrag({ type: "START_PLAN", pe: row[0], src: activeDay, srcRow: ri })}
-                              onDragEnd={() => { resetDrag(); handleTouchEnd(); }}
-                              onTouchStart={() => isMobile && handleTouchStart(pe, activeDay, ri)}
-                              onTouchEnd={handleTouchEnd}
-                              onTouchMove={handleTouchMove}
-                              className={`${isMobile && isSuperset ? "w-full" : "flex-1"} bg-gray-800 rounded-lg p-2 transition-all ${!isMobile || isDraggingMobile ? "cursor-grab active:cursor-grabbing" : ""}`}>
-                              <div className="flex items-center gap-1.5">
-                                {!isMobile && <GripVertical size={11} className="text-gray-500 flex-shrink-0" />}
-                                {isMobile && isSuperset && (
-                                  <span className="text-xs text-orange-400 font-bold mr-1">{peIndex + 1}</span>
-                                )}
-                                <span className="flex-1 text-xs font-medium truncate">{ex.name}</span>
-                                <button onClick={() => updSets(activeDay, ri, pe.id, -1)} className="p-0.5 bg-gray-700 rounded hover:bg-gray-600"><Minus size={10} /></button>
-                                <span className="w-4 text-center text-orange-400 font-bold text-xs">{pe.sets}</span>
-                                <button onClick={() => updSets(activeDay, ri, pe.id, 1)} className="p-0.5 bg-gray-700 rounded hover:bg-gray-600"><Plus size={10} /></button>
-                                <button onClick={() => remPe(activeDay, ri, pe.id)} className="p-0.5 text-red-400 rounded hover:bg-red-500/20 ml-0.5"><Trash2 size={10} /></button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                        {((!isMobile && isDragging) || (isMobile && isDraggingMobile)) && row.length < 2 && (
-                          <DropZone active={true} highlight={drag.overRow === ri && drag.overPos === "superset"}
-                            label="Superset" className={isMobile && row.length > 1 ? "w-full mt-2" : "flex-1"}
-                            onOver={() => dispatchDrag({ type: "OVER", row: ri, pos: "superset" })}
-                            onLeave={() => dispatchDrag({ type: "OVER", row: null, pos: null })}
-                            onDrop={() => handleDrop(activeDay, ri, "superset")} />
-                        )}
-                      </div>
-                    </div>
-                    {((!isMobile && isDragging) || (isMobile && isDraggingMobile)) && (
-                      <DropZone active={true} highlight={drag.overRow === ri && drag.overPos === "new-row"}
-                        label="New row" className="h-8 mt-2"
-                        onOver={() => dispatchDrag({ type: "OVER", row: ri, pos: "new-row" })}
-                        onLeave={() => dispatchDrag({ type: "OVER", row: null, pos: null })}
-                        onDrop={() => handleDrop(activeDay, ri, "new-row")} />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        <PlannerContainer
+          isMobile={isMobile}
+          isDragging={isDragging}
+          isDraggingMobile={isDraggingMobile}
+          activeDay={activeDay}
+          fullDayName={fullDayName}
+          editingName={editingName}
+          setEditingName={setEditingName}
+          nameDraft={nameDraft}
+          setNameDraft={setNameDraft}
+          confirmName={confirmName}
+          dayNames={dayNames}
+          plan={plan}
+          handleDrop={handleDrop}
+          drag={drag}
+          dispatchDrag={dispatchDrag}
+          exMap={exMap}
+          updSets={updSets}
+          remPe={remPe}
+          resetDrag={resetDrag}
+          handleTouchStart={handleTouchStart}
+          handleTouchEnd={handleTouchEnd}
+          handleTouchMove={handleTouchMove}
+        />
       </div>
 
       {/* Mobile: FAB and Library Modal */}
       {isMobile && (
-        <>
-          <button
-            onClick={() => setShowLibrary(true)}
-            className="fixed bottom-20 right-4 w-14 h-14 bg-orange-500 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-orange-600 transition-colors z-40">
-            <Plus size={24} />
-          </button>
-
-          {showLibrary && (
-            <div className="fixed inset-0 bg-black/50 z-50 flex items-end" onClick={() => setShowLibrary(false)}>
-              <div className="bg-gray-900 w-full rounded-t-2xl max-h-[80vh] flex flex-col" onClick={e => e.stopPropagation()}>
-                <div className="flex items-center justify-between p-4 border-b border-gray-800">
-                  <h3 className="text-lg font-semibold text-white">Exercise Library</h3>
-                  <button onClick={() => setShowLibrary(false)} className="p-2 hover:bg-gray-800 rounded-lg">
-                    <X size={20} className="text-gray-400" />
-                  </button>
-                </div>
-                <div className="overflow-y-auto p-4 space-y-2">
-                  {Object.entries(libGrouped).map(([cat, exs]) => {
-                    if (!exs.length) return null;
-                    return (
-                      <div key={cat} className="rounded-lg overflow-hidden bg-gray-800">
-                        <div className="px-3 py-2 flex items-center justify-between cursor-pointer" onClick={() => setLibCats(p => ({ ...p, [cat]: !p[cat] }))}>
-                          <span className="text-sm font-medium text-white">{cat}</span>
-                          {libCats[cat] ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
-                        </div>
-                        {libCats[cat] && (
-                          <div className="p-2 space-y-1 bg-gray-900">
-                            {exs.map(ex => {
-                              const inDay = (plan[activeDay] || []).flat().some(pe => pe.exerciseId === ex.id);
-                              return (
-                                <button
-                                  key={ex.id}
-                                  onClick={() => !inDay && handleMobileExerciseClick(ex)}
-                                  disabled={inDay}
-                                  className={`w-full flex items-center gap-2 rounded px-3 py-2.5 text-sm transition-colors ${inDay ? "opacity-40 cursor-not-allowed bg-gray-800" : "bg-gray-800 hover:bg-gray-700 active:bg-gray-600"}`}>
-                                  <span className="truncate flex-1 text-left">{ex.name}</span>
-                                  {inDay && <Check size={14} className="text-gray-500" />}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Context Menu for adding exercise */}
-          {contextMenu?.show && (
-            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setContextMenu(null)}>
-              <div className="bg-gray-900 rounded-xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
-                <div className="p-4 border-b border-gray-800">
-                  <h3 className="font-semibold text-white">Add {contextMenu.exercise.name}</h3>
-                </div>
-                <div className="p-2">
-                  <button
-                    onClick={() => addAsNewExercise(contextMenu.exercise)}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-800 rounded-lg transition-colors">
-                    <Plus size={18} className="text-orange-500" />
-                    <span className="text-sm text-white">Add as new exercise</span>
-                  </button>
-                  {(plan[activeDay] || []).length > 0 && (
-                    <>
-                      <div className="px-4 py-2">
-                        <p className="text-xs text-gray-500 uppercase tracking-wide">Superset with:</p>
-                      </div>
-                      {(plan[activeDay] || []).map((row, ri) => {
-                        if (row.length >= 2) return null;
-                        return (
-                          <button
-                            key={ri}
-                            onClick={() => addAsSuperset(contextMenu.exercise, ri)}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-800 rounded-lg transition-colors">
-                            <GripVertical size={18} className="text-gray-500" />
-                            <div className="flex-1">
-                              <p className="text-sm text-white">{row.map(pe => exMap.get(pe.exerciseId)?.name).join(" + ")}</p>
-                              <p className="text-xs text-gray-500">Row {ri + 1}</p>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </>
-                  )}
-                </div>
-                <div className="p-2 border-t border-gray-800">
-                  <button
-                    onClick={() => setContextMenu(null)}
-                    className="w-full py-2.5 text-sm text-gray-400 hover:text-white transition-colors">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+        <ExerciseLibraryModal
+          showLibrary={showLibrary}
+          setShowLibrary={setShowLibrary}
+          libGrouped={libGrouped}
+          libCats={libCats}
+          setLibCats={setLibCats}
+          plan={plan}
+          activeDay={activeDay}
+          exMap={exMap}
+          handleMobileExerciseClick={handleMobileExerciseClick}
+          contextMenu={contextMenu}
+          setContextMenu={setContextMenu}
+          addAsNewExercise={addAsNewExercise}
+          addAsSuperset={addAsSuperset}
+        />
       )}
     </div>
   );

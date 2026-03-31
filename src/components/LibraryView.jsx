@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { Plus, X, Edit2, Check, Trash2 } from "lucide-react";
 import ExerciseModal from "./ExerciseModal";
+import MuscleCarousel from "./ui/MuscleCarousel";
+import ExerciseCard from "./ui/ExerciseCard";
+import AddExerciseForm from "./ui/AddExerciseForm";
+import LibraryHeader from "./ui/LibraryHeader";
+import EmptyState from "./ui/EmptyState";
 import { uid } from "../constants";
 
 export default function LibraryView({ exercises, setExercises, goals, muscleCats, setPlan }) {
@@ -74,73 +78,38 @@ export default function LibraryView({ exercises, setExercises, goals, muscleCats
           onClose={() => { setModal(null); setIsNewModal(false); }}
           onConfirmAdd={confirmAdd} />
       )}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Exercise Library</h2>
-        <button onClick={() => setShowAdd(!showAdd)} className={`p-2 rounded-lg transition-colors ${showAdd ? "bg-red-500/20 text-red-400" : "bg-orange-500 text-white hover:bg-orange-600"}`}>
-          {showAdd ? <X size={20} /> : <Plus size={20} />}
-        </button>
-      </div>
+      <LibraryHeader showAdd={showAdd} onToggleAdd={() => setShowAdd(!showAdd)} />
       {showAdd && (
-        <div className="bg-gray-900 rounded-xl p-4 mb-4 ring-1 ring-orange-500/30">
-          <p className="font-medium mb-3">Add New Exercise</p>
-          <input value={newName} onChange={e => setNewName(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && newTags.length && openNewPreview()}
-            placeholder="Exercise name"
-            className="w-full bg-gray-800 rounded-lg px-3 py-2 mb-3 text-white placeholder-gray-600 outline-none focus:ring-1 focus:ring-orange-500" />
-          <p className="text-sm text-gray-500 mb-2">Muscle Groups</p>
-          <div className="flex flex-wrap gap-1 max-h-28 overflow-y-auto mb-3">
-            {allMuscles.map(m => <button key={m} onClick={() => toggle(m, setNewTags)}
-              className={`text-xs px-2 py-1 rounded-full transition-colors ${newTags.includes(m) ? "bg-orange-500 text-white" : "bg-gray-700 text-gray-400 hover:bg-gray-600"}`}>{m}</button>)}
-          </div>
-          <button onClick={openNewPreview} disabled={!newName.trim() || !newTags.length}
-            className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2 transition-colors">
-            <Plus size={18} /> Preview &amp; Add
-          </button>
-        </div>
+        <AddExerciseForm
+          newName={newName}
+          setNewName={setNewName}
+          newTags={newTags}
+          setNewTags={setNewTags}
+          allMuscles={allMuscles}
+          onPreview={openNewPreview}
+        />
       )}
-      <div className="flex gap-1 overflow-x-auto pb-2 mb-4">
-        {Object.keys(muscleCats).map(cat => (
-          <button key={cat} onClick={() => setCatTab(cat)}
-            className={`px-3 py-2 rounded-lg text-sm font-medium flex-shrink-0 transition-colors ${catTab === cat ? "bg-orange-500 text-white" : "bg-gray-900 text-gray-400 hover:bg-gray-800"}`}>
-            {cat}
-          </button>
-        ))}
-      </div>
+      <MuscleCarousel muscleCats={muscleCats} catTab={catTab} setCatTab={setCatTab} />
       <div className="space-y-2">
         {getCatEx(catTab).map(ex => (
-          <div key={ex.id} className="bg-gray-900 rounded-xl p-4">
-            {editId === ex.id ? (
-              <div>
-                <input value={editName} onChange={e => setEditName(e.target.value)}
-                  className="w-full bg-gray-800 rounded-lg px-3 py-2 mb-3 text-white outline-none focus:ring-1 focus:ring-orange-500" />
-                <p className="text-sm text-gray-500 mb-2">Muscle Groups</p>
-                <div className="flex flex-wrap gap-1 max-h-28 overflow-y-auto mb-3">
-                  {allMuscles.map(m => <button key={m} onClick={() => toggle(m, setEditTags)}
-                    className={`text-xs px-2 py-1 rounded-full ${editTags.includes(m) ? "bg-orange-500 text-white" : "bg-gray-700 text-gray-400 hover:bg-gray-600"}`}>{m}</button>)}
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={save} className="flex-1 bg-green-500/20 text-green-400 hover:bg-green-500/30 py-2 rounded-lg flex items-center justify-center gap-1"><Check size={16} />Save</button>
-                  <button onClick={() => setEditId(null)} className="flex-1 bg-gray-800 text-gray-400 hover:bg-gray-700 py-2 rounded-lg flex items-center justify-center gap-1"><X size={16} />Cancel</button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between">
-                <button className="flex-1 min-w-0 text-left" onClick={() => openDetail(ex)}>
-                  <p className="font-medium text-white">{ex.name}</p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {ex.tags.map(t => <span key={t} className="text-xs bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full">{t}</span>)}
-                  </div>
-                </button>
-                <div className="flex gap-2 ml-2 flex-shrink-0">
-                  <button onClick={() => { setEditId(ex.id); setEditName(ex.name); setEditTags([...ex.tags]); }} className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700"><Edit2 size={16} /></button>
-                  <button onClick={() => del(ex.id)} className="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20"><Trash2 size={16} /></button>
-                </div>
-              </div>
-            )}
-          </div>
+          <ExerciseCard
+            key={ex.id}
+            exercise={ex}
+            isEditing={editId === ex.id}
+            editName={editName}
+            setEditName={setEditName}
+            editTags={editTags}
+            allMuscles={allMuscles}
+            toggleTag={(m) => toggle(m, setEditTags)}
+            onSave={save}
+            onCancel={() => setEditId(null)}
+            onEdit={() => { setEditId(ex.id); setEditName(ex.name); setEditTags([...ex.tags]); }}
+            onDelete={() => del(ex.id)}
+            onOpenDetail={() => openDetail(ex)}
+          />
         ))}
         {!getCatEx(catTab).length && (
-          <div className="text-center text-gray-600 py-10 border-2 border-dashed border-gray-800 rounded-xl">No exercises in {catTab}</div>
+          <EmptyState message={`No exercises in ${catTab}`} />
         )}
       </div>
     </div>
