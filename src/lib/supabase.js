@@ -1,3 +1,5 @@
+import { createClient } from '@supabase/supabase-js';
+
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
 const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -7,57 +9,87 @@ if (!SB_URL || !SB_KEY) {
   console.error("SB_KEY:", SB_KEY ? "✓" : "✗ MISSING");
 }
 
+// Create Supabase client
+export const supabase = createClient(SB_URL, SB_KEY, {
+  realtime: {
+    params: {
+      eventsPerSecond: 10
+    }
+  }
+});
+
 export async function sbSignIn(email, password) {
-  // Validate configuration before making request
   if (!SB_URL || !SB_KEY) {
     throw new Error("Supabase configuration missing. Check environment variables.");
   }
 
-  const url = `${SB_URL}/auth/v1/token?grant_type=password`;
-  console.log("Attempting sign in to:", url.replace(SB_URL, "[SUPABASE_URL]"));
-
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", apikey: SB_KEY },
-    body: JSON.stringify({ email, password }),
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
   });
 
-  // Check if response is ok and content-type is JSON
-  if (!r.ok) {
-    const contentType = r.headers.get("content-type");
-    console.error("Sign in failed:", r.status, r.statusText);
-    console.error("Requested URL:", url.replace(SB_URL, "[SUPABASE_URL]"));
-
-    if (contentType?.includes("application/json")) {
-      const d = await r.json();
-      throw new Error(d.error_description || d.msg || `Login failed: ${r.status}`);
-    } else {
-      throw new Error(`Login failed: Server returned ${r.status}. Please check your Supabase URL and configuration.`);
-    }
+  if (error) {
+    console.error("Sign in failed:", error.message);
+    throw new Error(error.message);
   }
 
-  const d = await r.json();
-  if (d.error || !d.access_token) throw new Error(d.error_description || d.msg || "Login failed");
-  return d;
+  if (!data.session) {
+    throw new Error("Login failed: No session returned");
+  }
+
+  return data.session;
 }
 
-export async function sbLoadData(token) {
-  const r = await fetch(`${SB_URL}/rest/v1/app_state?select=data`, {
-    headers: { apikey: SB_KEY, Authorization: `Bearer ${token}` },
-  });
-  const rows = await r.json();
-  return rows?.[0]?.data || null;
+export async function sbLoadData(userId) {
+  const { data, error } = await supabase
+    .from('app_state')
+    .select('data')
+    .eq('user_id', userId)
+    .single();
+
+  if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+    console.error("Error loading data:", error);
+    return null;
+  }
+
+  return data?.data || null;
 }
 
-export async function sbSaveData(token, userId, data) {
-  await fetch(`${SB_URL}/rest/v1/app_state`, {
-    method: "POST",
-    headers: {
-      apikey: SB_KEY,
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      Prefer: "resolution=merge-duplicates",
-    },
-    body: JSON.stringify({ user_id: userId, data, updated_at: new Date().toISOString() }),
-  });
+export async function sbSaveData(userId, data) {
+  const { error } = await supabase
+    .from('app_state')
+    .upsert({
+      user_id: userId,
+      data,
+      updated_at: new Date().toISOString()
+    }, {
+      onConflict: 'user_id'
+    });
+
+  if (error) {
+    console.error("Error saving data:", error);
+    throw error;
+  }
+}
+
+// Subscribe to real-time changes for a user's data
+export function subscribeToDataChanges(userId, onDataChange) {
+  const channel = supabase
+    .channel(`app_state:${userId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'app_state',
+        filter: `user_id=eq.${userId}`
+      },
+      (payload) => {
+        console.log('Real-time update received:', payload);
+        onDataChange(payload.new.data);
+      }
+    )
+    .subscribe();
+
+  return channel;
 }

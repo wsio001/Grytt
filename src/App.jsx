@@ -5,8 +5,8 @@ import TodayView from "./components/views/TodayView/TodayView";
 import PlannerView from "./components/views/PlannerView/PlannerView";
 import LibraryView from "./components/views/LibraryView/LibraryView";
 import SettingsView from "./components/views/SettingsView/SettingsView";
-import { useDebouncedSave } from "./hooks/useDebouncedSave";
-import { sbLoadData } from "./lib/supabase";
+import { useDebouncedSave, loadCachedData, clearCache } from "./hooks/useDebouncedSave";
+import { sbLoadData, subscribeToDataChanges, supabase } from "./lib/supabase";
 import { DAYS, INITIAL_MUSCLE_CATS, DEFAULT_GOALS, todayDay, emptyPlan } from "./constants";
 import { DEFAULT_EX } from "./data/defaultExercises";
 
@@ -52,42 +52,65 @@ export default function App() {
     // Persist session (store the full session object with tokens)
     localStorage.setItem(SESSION_KEY, JSON.stringify(sess));
 
-    try {
-      const d = await sbLoadData(sess.access_token);
-      if (d) {
-        setEx(d.exercises || DEFAULT_EX);
-        setGoals(d.goals   || DEFAULT_GOALS);
-        setLogs(d.logs     || []);
-        setDayNames(d.dayNames   || Object.fromEntries(DAYS.map(d => [d, ""])));
+    // STEP 1: Try to load from localStorage cache first (instant)
+    const cachedData = loadCachedData(sess.user.id);
+    if (cachedData) {
+      console.log('⚡ Using cached data for instant load');
+      setEx(cachedData.exercises || DEFAULT_EX);
+      setGoals(cachedData.goals || DEFAULT_GOALS);
+      setLogs(cachedData.logs || []);
+      setDayNames(cachedData.dayNames || Object.fromEntries(DAYS.map(d => [d, ""])));
 
-        // Sort muscle categories to match INITIAL_MUSCLE_CATS order
+      const loadedMCats = cachedData.muscleCats || INITIAL_MUSCLE_CATS;
+      const sortedMCats = {};
+      Object.keys(INITIAL_MUSCLE_CATS).forEach(cat => {
+        if (loadedMCats[cat]) sortedMCats[cat] = loadedMCats[cat];
+      });
+      Object.keys(loadedMCats).forEach(cat => {
+        if (!sortedMCats[cat]) sortedMCats[cat] = loadedMCats[cat];
+      });
+      setMCats(sortedMCats);
+      setPlan(cachedData.plan || emptyPlan());
+      setLoading(false);
+    }
+
+    // STEP 2: Fetch from database in background (in case another device updated)
+    try {
+      const d = await sbLoadData(sess.user.id);
+      if (d) {
+        console.log('☁️ Loaded latest data from cloud');
+        setEx(d.exercises || DEFAULT_EX);
+        setGoals(d.goals || DEFAULT_GOALS);
+        setLogs(d.logs || []);
+        setDayNames(d.dayNames || Object.fromEntries(DAYS.map(d => [d, ""])));
+
         const loadedMCats = d.muscleCats || INITIAL_MUSCLE_CATS;
         const sortedMCats = {};
         Object.keys(INITIAL_MUSCLE_CATS).forEach(cat => {
-          if (loadedMCats[cat]) {
-            sortedMCats[cat] = loadedMCats[cat];
-          }
+          if (loadedMCats[cat]) sortedMCats[cat] = loadedMCats[cat];
         });
-        // Add any custom categories not in INITIAL_MUSCLE_CATS
         Object.keys(loadedMCats).forEach(cat => {
-          if (!sortedMCats[cat]) {
-            sortedMCats[cat] = loadedMCats[cat];
-          }
+          if (!sortedMCats[cat]) sortedMCats[cat] = loadedMCats[cat];
         });
         setMCats(sortedMCats);
-
-        setPlan(d.plan           || emptyPlan());
-      } else {
+        setPlan(d.plan || emptyPlan());
+      } else if (!cachedData) {
+        // No cache and no server data - use defaults
         setEx(DEFAULT_EX); setGoals(DEFAULT_GOALS); setLogs([]); setPlan(emptyPlan());
       }
-    } catch {
-      setEx(DEFAULT_EX); setGoals(DEFAULT_GOALS); setLogs([]); setPlan(emptyPlan());
+    } catch (error) {
+      console.error('Failed to load from cloud:', error);
+      if (!cachedData) {
+        // No cache and server failed - use defaults
+        setEx(DEFAULT_EX); setGoals(DEFAULT_GOALS); setLogs([]); setPlan(emptyPlan());
+      }
     }
     setLoading(false);
   };
 
   const onLogout = () => {
     localStorage.removeItem(SESSION_KEY);
+    clearCache(); // Clear the data cache on logout
     setSession(null); setEx(null); setPlan(null); setGoals(null); setLogs(null);
     setDayNames(Object.fromEntries(DAYS.map(d => [d, ""]))); setMCats(INITIAL_MUSCLE_CATS);
   };
@@ -101,6 +124,47 @@ export default function App() {
     [exercises, plan, goals, logs, dayNames, muscleCats, session]);
 
   useDebouncedSave(storagePayload, session);
+
+  // Subscribe to real-time data changes from other devices
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    console.log('🔔 Setting up real-time subscription for user:', session.user.id);
+
+    const channel = subscribeToDataChanges(session.user.id, (newData) => {
+      console.log('📡 Received update from another device');
+
+      // Update state with incoming data
+      if (newData) {
+        setEx(newData.exercises || DEFAULT_EX);
+        setGoals(newData.goals || DEFAULT_GOALS);
+        setLogs(newData.logs || []);
+        setDayNames(newData.dayNames || Object.fromEntries(DAYS.map(d => [d, ""])));
+
+        // Sort muscle categories to match INITIAL_MUSCLE_CATS order
+        const loadedMCats = newData.muscleCats || INITIAL_MUSCLE_CATS;
+        const sortedMCats = {};
+        Object.keys(INITIAL_MUSCLE_CATS).forEach(cat => {
+          if (loadedMCats[cat]) {
+            sortedMCats[cat] = loadedMCats[cat];
+          }
+        });
+        Object.keys(loadedMCats).forEach(cat => {
+          if (!sortedMCats[cat]) {
+            sortedMCats[cat] = loadedMCats[cat];
+          }
+        });
+        setMCats(sortedMCats);
+        setPlan(newData.plan || emptyPlan());
+      }
+    });
+
+    // Cleanup subscription on unmount or logout
+    return () => {
+      console.log('🔕 Cleaning up real-time subscription');
+      supabase.removeChannel(channel);
+    };
+  }, [session?.user?.id]);
 
   // Show loading screen while checking for stored session or loading data
   if (loading) return (
@@ -126,7 +190,7 @@ export default function App() {
       <div className="bg-gray-900 px-4 py-3 border-b border-gray-800 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Dumbbell size={22} className="text-orange-500" />
-          <span className="text-lg font-bold tracking-wide">Workout Planner</span>
+          <span className="text-lg font-bold tracking-wide">Grytt</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500 capitalize">{userName}</span>
