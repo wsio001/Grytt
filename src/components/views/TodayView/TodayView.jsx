@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { Dumbbell } from "lucide-react";
 import { todayDay, todayFullName, todayStr } from "../../../constants";
 import WorkoutProgressCard from "../../ui/WorkoutProgressCard";

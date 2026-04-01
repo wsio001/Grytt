@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
-import { Dumbbell, Calendar, BookOpen, Settings, LogOut } from "lucide-react";
+import { Dumbbell, Calendar, BookOpen, Settings, LogOut, RefreshCw } from "lucide-react";
 import LoginScreen from "./components/LoginScreen";
 import TodayView from "./components/views/TodayView/TodayView";
 import PlannerView from "./components/views/PlannerView/PlannerView";
 import LibraryView from "./components/views/LibraryView/LibraryView";
 import SettingsView from "./components/views/SettingsView/SettingsView";
-import { useDebouncedSave, loadCachedData, clearCache } from "./hooks/useDebouncedSave";
+import { useDebouncedSave, loadCachedData, clearCache, hasUnsavedChanges } from "./hooks/useDebouncedSave";
 import { sbLoadData, supabase } from "./lib/supabase";
 import { DAYS, INITIAL_MUSCLE_CATS, DEFAULT_GOALS, todayDay, emptyPlan } from "./constants";
 import { DEFAULT_EX } from "./data/defaultExercises";
@@ -23,6 +23,46 @@ export default function App() {
   const [muscleCats, setMCats]    = useState(INITIAL_MUSCLE_CATS);
   const [loading, setLoading]     = useState(true);
   const [activeDay, setActiveDay] = useState(todayDay());
+  const [syncing, setSyncing] = useState(false);
+
+  // Manual refresh function
+  const handleManualRefresh = async () => {
+    if (!session?.user?.id || syncing) return;
+
+    // Check if there are unsaved changes in localStorage (< 3 seconds old)
+    if (hasUnsavedChanges(session.user.id, 3000)) {
+      console.log('⚠️ Skipping refresh - you have unsaved changes. Wait 3 seconds after editing.');
+      return;
+    }
+
+    setSyncing(true);
+    console.log('🔄 Manual refresh triggered');
+    try {
+      const d = await sbLoadData(session.user.id);
+      if (d) {
+        console.log('✅ Manual refresh successful');
+        setEx(d.exercises || DEFAULT_EX);
+        setGoals(d.goals || DEFAULT_GOALS);
+        setLogs(d.logs || []);
+        setDayNames(d.dayNames || Object.fromEntries(DAYS.map(d => [d, ""])));
+
+        const loadedMCats = d.muscleCats || INITIAL_MUSCLE_CATS;
+        const sortedMCats = {};
+        Object.keys(INITIAL_MUSCLE_CATS).forEach(cat => {
+          if (loadedMCats[cat]) sortedMCats[cat] = loadedMCats[cat];
+        });
+        Object.keys(loadedMCats).forEach(cat => {
+          if (!sortedMCats[cat]) sortedMCats[cat] = loadedMCats[cat];
+        });
+        setMCats(sortedMCats);
+        setPlan(d.plan || emptyPlan());
+      }
+    } catch (error) {
+      console.error('Manual refresh failed:', error);
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   // Restore session on mount
   useEffect(() => {
@@ -146,7 +186,14 @@ export default function App() {
     const handleVisibilityChange = async () => {
       // When app becomes visible (user switches back to it)
       if (!document.hidden) {
-        console.log('👁️ App visible - fetching latest data');
+        console.log('👁️ App visible - checking for updates');
+
+        // Skip refresh if there are very recent unsaved changes (< 3 seconds)
+        if (hasUnsavedChanges(session.user.id, 3000)) {
+          console.log('⚠️ Skipping auto-refresh - you have unsaved changes');
+          return;
+        }
+
         try {
           const d = await sbLoadData(session.user.id);
           if (d) {
@@ -208,6 +255,14 @@ export default function App() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500 capitalize hidden sm:inline">{userName}</span>
+          <button
+            onClick={handleManualRefresh}
+            disabled={syncing}
+            className="p-1.5 bg-gray-800 rounded-lg text-gray-400 hover:text-white disabled:opacity-50"
+            title="Sync latest data"
+          >
+            <RefreshCw size={15} className={syncing ? 'animate-spin' : ''} />
+          </button>
           <button onClick={onLogout} className="p-1.5 bg-gray-800 rounded-lg text-gray-400 hover:text-white">
             <LogOut size={15} />
           </button>

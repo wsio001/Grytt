@@ -28,3 +28,9 @@ dist-ssr
 .env.local
 .env.*.local
 .vercel
+
+# Testing documentation
+TESTING_PLAN.md
+
+# SwiftUI temporary files
+*.swift
