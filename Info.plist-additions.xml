@@ -1,0 +1,21 @@
+<!-- Add these keys to your Info.plist -->
+
+<!-- Status Bar Configuration -->
+<key>UIStatusBarStyle</key>
+<string>UIStatusBarStyleLightContent</string>
+
+<key>UIViewControllerBasedStatusBarAppearance</key>
+<true/>
+
+<!-- Ensure status bar is visible -->
+<key>UIStatusBarHidden</key>
+<false/>
+
+<!-- If you want localhost to work without issues -->
+<key>NSAppTransportSecurity</key>
+<dict>
+    <key>NSAllowsLocalNetworking</key>
+    <true/>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+</dict>

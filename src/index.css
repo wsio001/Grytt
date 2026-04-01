@@ -10,12 +10,13 @@
   --sar: env(safe-area-inset-right);
 }
 
-/* Safe area top padding for header */
+/* Safe area top - adds padding for status bar + notch (mobile only) */
 .safe-area-top {
-  padding-top: max(0.5rem, env(safe-area-inset-top));
+  /* Only on mobile devices with notch/safe areas */
+  padding-top: env(safe-area-inset-top);
 }
 
 /* Safe area bottom padding for bottom nav */
 .safe-area-bottom {
-  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom, 0.75rem);
 }

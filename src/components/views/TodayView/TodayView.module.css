@@ -23,15 +23,3 @@
 .emptySubtitle {
   @apply text-sm mt-1;
 }
-
-.saveButton {
-  @apply fixed bottom-28 left-4 right-4 font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg z-40;
-}
-
-.saveButtonSaved {
-  @apply bg-green-500/20 text-green-400 border-2 border-green-500;
-}
-
-.saveButtonDefault {
-  @apply bg-orange-500 hover:bg-orange-600 text-white;
-}
