@@ -1,6 +1,12 @@
 const SB_URL = import.meta.env.VITE_SUPABASE_URL;
 const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+if (!SB_URL || !SB_KEY) {
+  console.error("Missing Supabase configuration. Please check your .env file.");
+  console.error("SB_URL:", SB_URL ? "✓" : "✗ MISSING");
+  console.error("SB_KEY:", SB_KEY ? "✓" : "✗ MISSING");
+}
+
 export const USER_MAP = {
   william: {
     email: import.meta.env.VITE_WILLIAM_EMAIL,
@@ -18,6 +24,18 @@ export async function sbSignIn(email, password) {
     headers: { "Content-Type": "application/json", apikey: SB_KEY },
     body: JSON.stringify({ email, password }),
   });
+
+  // Check if response is ok and content-type is JSON
+  if (!r.ok) {
+    const contentType = r.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
+      const d = await r.json();
+      throw new Error(d.error_description || d.msg || `Login failed: ${r.status}`);
+    } else {
+      throw new Error(`Login failed: Server returned ${r.status}. Please check your Supabase URL and configuration.`);
+    }
+  }
+
   const d = await r.json();
   if (d.error || !d.access_token) throw new Error(d.error_description || d.msg || "Login failed");
   return d;
