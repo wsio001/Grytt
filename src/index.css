@@ -10,12 +10,6 @@
   --sar: env(safe-area-inset-right);
 }
 
-/* Remove body padding since we'll handle it per component */
-body {
-  margin: 0;
-  padding: 0;
-}
-
 /* Safe area top padding for header */
 .safe-area-top {
   padding-top: max(0.5rem, env(safe-area-inset-top));

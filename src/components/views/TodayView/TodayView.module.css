@@ -25,7 +25,7 @@
 }
 
 .saveButton {
-  @apply fixed bottom-20 left-4 right-4 font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg z-40;
+  @apply fixed bottom-28 left-4 right-4 font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg z-40;
 }
 
 .saveButtonSaved {
