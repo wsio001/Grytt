@@ -3,7 +3,7 @@ import { sbSaveData } from "../lib/supabase";
 
 const CACHE_KEY = "grytt_data_cache";
 
-export function useDebouncedSave(payload, session, delay = 1200) {
+export function useDebouncedSave(payload, session, delay = 1200, onSaveStatusChange) {
   const timer = useRef(null);
   const saveInProgress = useRef(false);
 
@@ -21,6 +21,9 @@ export function useDebouncedSave(payload, session, delay = 1200) {
       console.error('Failed to save to localStorage:', error);
     }
 
+    // Show "saving" status
+    onSaveStatusChange?.('saving');
+
     // DEBOUNCED: Save to Supabase database (reduces server load)
     clearTimeout(timer.current);
     timer.current = setTimeout(async () => {
@@ -29,15 +32,20 @@ export function useDebouncedSave(payload, session, delay = 1200) {
       try {
         await sbSaveData(session.user.id, payload);
         console.log('✓ Data synced to cloud');
+        onSaveStatusChange?.('saved');
+
+        // Clear saved status after 2 seconds
+        setTimeout(() => onSaveStatusChange?.(null), 2000);
       } catch (error) {
         console.error('Cloud sync failed:', error);
+        onSaveStatusChange?.('error');
       } finally {
         saveInProgress.current = false;
       }
     }, delay);
 
     return () => clearTimeout(timer.current);
-  }, [payload, session, delay]);
+  }, [payload, session, delay, onSaveStatusChange]);
 }
 
 // Load cached data from localStorage

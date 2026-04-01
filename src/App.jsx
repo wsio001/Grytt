@@ -23,6 +23,7 @@ export default function App() {
   const [muscleCats, setMCats]    = useState(INITIAL_MUSCLE_CATS);
   const [loading, setLoading]     = useState(true);
   const [activeDay, setActiveDay] = useState(todayDay());
+  const [saveStatus, setSaveStatus] = useState(null); // 'saving' | 'saved' | 'error'
 
   // Restore session on mount
   useEffect(() => {
@@ -137,7 +138,7 @@ export default function App() {
       : null,
     [exercises, plan, goals, logs, dayNames, muscleCats, session]);
 
-  useDebouncedSave(storagePayload, session);
+  useDebouncedSave(storagePayload, session, 1200, setSaveStatus);
 
   // Refresh data when app comes to foreground (no cost, automatic feel)
   useEffect(() => {
@@ -206,7 +207,27 @@ export default function App() {
           <Dumbbell size={22} className="text-orange-500" />
           <span className="text-lg font-bold tracking-wide">Grytt</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {/* Save Status Indicator */}
+          {saveStatus === 'saving' && (
+            <span className="text-xs text-yellow-400 flex items-center gap-1">
+              <span className="inline-block w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse"></span>
+              Saving...
+            </span>
+          )}
+          {saveStatus === 'saved' && (
+            <span className="text-xs text-green-400 flex items-center gap-1">
+              <span className="inline-block w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+              Saved
+            </span>
+          )}
+          {saveStatus === 'error' && (
+            <span className="text-xs text-red-400 flex items-center gap-1">
+              <span className="inline-block w-1.5 h-1.5 bg-red-400 rounded-full"></span>
+              Error
+            </span>
+          )}
+
           <span className="text-xs text-gray-500 capitalize">{userName}</span>
           <button onClick={onLogout} className="p-1.5 bg-gray-800 rounded-lg text-gray-400 hover:text-white">
             <LogOut size={15} />

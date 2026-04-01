@@ -41,35 +41,57 @@ export async function sbSignIn(email, password) {
 }
 
 export async function sbLoadData(userId) {
+  console.log('📥 Fetching data for user:', userId);
+
   const { data, error } = await supabase
     .from('app_state')
-    .select('data')
+    .select('data, updated_at')
     .eq('user_id', userId)
     .single();
 
   if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-    console.error("Error loading data:", error);
+    console.error("❌ Load FAILED:", error.message);
     return null;
+  }
+
+  if (data) {
+    console.log("✅ Load SUCCESSFUL from Supabase");
+    console.log("📊 Last updated:", data.updated_at);
+    console.log("📦 Data size:", JSON.stringify(data.data).length, 'bytes');
+  } else {
+    console.log("ℹ️ No data found in Supabase for this user");
   }
 
   return data?.data || null;
 }
 
 export async function sbSaveData(userId, data) {
-  const { error } = await supabase
+  console.log('💾 Attempting to save data for user:', userId);
+  console.log('📦 Data payload size:', JSON.stringify(data).length, 'bytes');
+
+  const payload = {
+    user_id: userId,
+    data,
+    updated_at: new Date().toISOString()
+  };
+
+  const { error, data: result } = await supabase
     .from('app_state')
-    .upsert({
-      user_id: userId,
-      data,
-      updated_at: new Date().toISOString()
-    }, {
+    .upsert(payload, {
       onConflict: 'user_id'
-    });
+    })
+    .select();
 
   if (error) {
-    console.error("Error saving data:", error);
+    console.error("❌ Save FAILED:", error.message);
+    console.error("Error details:", error);
     throw error;
   }
+
+  console.log("✅ Save SUCCESSFUL to Supabase");
+  console.log("📊 Saved at:", new Date().toISOString());
+  console.log("🆔 User ID:", userId);
+  return result;
 }
 
 // Subscribe to real-time changes for a user's data
