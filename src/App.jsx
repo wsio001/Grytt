@@ -6,7 +6,7 @@ import PlannerView from "./components/views/PlannerView/PlannerView";
 import LibraryView from "./components/views/LibraryView/LibraryView";
 import SettingsView from "./components/views/SettingsView/SettingsView";
 import { useDebouncedSave, loadCachedData, clearCache } from "./hooks/useDebouncedSave";
-import { sbLoadData, subscribeToDataChanges, supabase } from "./lib/supabase";
+import { sbLoadData, supabase } from "./lib/supabase";
 import { DAYS, INITIAL_MUSCLE_CATS, DEFAULT_GOALS, todayDay, emptyPlan } from "./constants";
 import { DEFAULT_EX } from "./data/defaultExercises";
 
@@ -33,10 +33,24 @@ export default function App() {
           const sess = JSON.parse(stored);
           // Validate the session has required fields
           if (sess.access_token && sess.user) {
+            // CRITICAL: Tell Supabase client about the restored session
+            const { error } = await supabase.auth.setSession({
+              access_token: sess.access_token,
+              refresh_token: sess.refresh_token
+            });
+
+            if (error) {
+              console.error('Failed to restore session:', error);
+              localStorage.removeItem(SESSION_KEY);
+              setLoading(false);
+              return;
+            }
+
             await onLogin(sess);
             return;
           }
         } catch (e) {
+          console.error('Session restore error:', e);
           localStorage.removeItem(SESSION_KEY);
         }
       }
@@ -125,44 +139,44 @@ export default function App() {
 
   useDebouncedSave(storagePayload, session);
 
-  // Subscribe to real-time data changes from other devices
+  // Refresh data when app comes to foreground (no cost, automatic feel)
   useEffect(() => {
     if (!session?.user?.id) return;
 
-    console.log('🔔 Setting up real-time subscription for user:', session.user.id);
+    const handleVisibilityChange = async () => {
+      // When app becomes visible (user switches back to it)
+      if (!document.hidden) {
+        console.log('👁️ App visible - fetching latest data');
+        try {
+          const d = await sbLoadData(session.user.id);
+          if (d) {
+            console.log('🔄 Refreshed data from cloud');
+            setEx(d.exercises || DEFAULT_EX);
+            setGoals(d.goals || DEFAULT_GOALS);
+            setLogs(d.logs || []);
+            setDayNames(d.dayNames || Object.fromEntries(DAYS.map(d => [d, ""])));
 
-    const channel = subscribeToDataChanges(session.user.id, (newData) => {
-      console.log('📡 Received update from another device');
-
-      // Update state with incoming data
-      if (newData) {
-        setEx(newData.exercises || DEFAULT_EX);
-        setGoals(newData.goals || DEFAULT_GOALS);
-        setLogs(newData.logs || []);
-        setDayNames(newData.dayNames || Object.fromEntries(DAYS.map(d => [d, ""])));
-
-        // Sort muscle categories to match INITIAL_MUSCLE_CATS order
-        const loadedMCats = newData.muscleCats || INITIAL_MUSCLE_CATS;
-        const sortedMCats = {};
-        Object.keys(INITIAL_MUSCLE_CATS).forEach(cat => {
-          if (loadedMCats[cat]) {
-            sortedMCats[cat] = loadedMCats[cat];
+            const loadedMCats = d.muscleCats || INITIAL_MUSCLE_CATS;
+            const sortedMCats = {};
+            Object.keys(INITIAL_MUSCLE_CATS).forEach(cat => {
+              if (loadedMCats[cat]) sortedMCats[cat] = loadedMCats[cat];
+            });
+            Object.keys(loadedMCats).forEach(cat => {
+              if (!sortedMCats[cat]) sortedMCats[cat] = loadedMCats[cat];
+            });
+            setMCats(sortedMCats);
+            setPlan(d.plan || emptyPlan());
           }
-        });
-        Object.keys(loadedMCats).forEach(cat => {
-          if (!sortedMCats[cat]) {
-            sortedMCats[cat] = loadedMCats[cat];
-          }
-        });
-        setMCats(sortedMCats);
-        setPlan(newData.plan || emptyPlan());
+        } catch (error) {
+          console.error('Failed to refresh data:', error);
+        }
       }
-    });
+    };
 
-    // Cleanup subscription on unmount or logout
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
-      console.log('🔕 Cleaning up real-time subscription');
-      supabase.removeChannel(channel);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [session?.user?.id]);
 
