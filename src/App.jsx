@@ -6,8 +6,7 @@ import PlannerView from "./components/views/PlannerView/PlannerView";
 import LibraryView from "./components/views/LibraryView/LibraryView";
 import SettingsView from "./components/views/SettingsView/SettingsView";
 import { useDebouncedSave } from "./hooks/useDebouncedSave";
-import { sbLoadData, sbSignIn } from "./lib/supabase";
-import { USER_MAP } from "./lib/supabase";
+import { sbLoadData } from "./lib/supabase";
 import { DAYS, INITIAL_MUSCLE_CATS, DEFAULT_GOALS, todayDay, emptyPlan } from "./constants";
 import { DEFAULT_EX } from "./data/defaultExercises";
 
@@ -31,11 +30,10 @@ export default function App() {
       const stored = localStorage.getItem(SESSION_KEY);
       if (stored) {
         try {
-          const { username } = JSON.parse(stored);
-          const creds = USER_MAP[username];
-          if (creds) {
-            const sess = await sbSignIn(creds.email, creds.password);
-            await onLogin(sess, false); // false = not demo
+          const sess = JSON.parse(stored);
+          // Validate the session has required fields
+          if (sess.access_token && sess.user) {
+            await onLogin(sess);
             return;
           }
         } catch (e) {
@@ -47,17 +45,12 @@ export default function App() {
     restoreSession();
   }, []);
 
-  const onLogin = async (sess, isDemo = false) => {
+  const onLogin = async (sess) => {
     setLoading(true);
     setSession(sess);
 
-    // Persist session for non-demo users
-    if (!isDemo) {
-      const username = Object.entries(USER_MAP).find(([, v]) => v.email === sess.user?.email)?.[0];
-      if (username) {
-        localStorage.setItem(SESSION_KEY, JSON.stringify({ username }));
-      }
-    }
+    // Persist session (store the full session object with tokens)
+    localStorage.setItem(SESSION_KEY, JSON.stringify(sess));
 
     try {
       const d = await sbLoadData(sess.access_token);
@@ -119,7 +112,7 @@ export default function App() {
   // Show login screen only after we've confirmed there's no stored session
   if (!session) return <LoginScreen onLogin={onLogin} />;
 
-  const userName = Object.entries(USER_MAP).find(([, v]) => v.email === session.user?.email)?.[0] || "User";
+  const userName = session.user?.email?.split('@')[0] || "User";
 
   const TABS = [
     { id: "today",    icon: Dumbbell,  label: "Today" },

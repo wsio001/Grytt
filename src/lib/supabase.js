@@ -7,19 +7,16 @@ if (!SB_URL || !SB_KEY) {
   console.error("SB_KEY:", SB_KEY ? "✓" : "✗ MISSING");
 }
 
-export const USER_MAP = {
-  william: {
-    email: import.meta.env.VITE_WILLIAM_EMAIL,
-    password: import.meta.env.VITE_WILLIAM_PASSWORD
-  },
-  demo: {
-    email: import.meta.env.VITE_DEMO_EMAIL,
-    password: import.meta.env.VITE_DEMO_PASSWORD
-  },
-};
-
 export async function sbSignIn(email, password) {
-  const r = await fetch(`${SB_URL}/auth/v1/token?grant_type=password`, {
+  // Validate configuration before making request
+  if (!SB_URL || !SB_KEY) {
+    throw new Error("Supabase configuration missing. Check environment variables.");
+  }
+
+  const url = `${SB_URL}/auth/v1/token?grant_type=password`;
+  console.log("Attempting sign in to:", url.replace(SB_URL, "[SUPABASE_URL]"));
+
+  const r = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", apikey: SB_KEY },
     body: JSON.stringify({ email, password }),
@@ -28,6 +25,9 @@ export async function sbSignIn(email, password) {
   // Check if response is ok and content-type is JSON
   if (!r.ok) {
     const contentType = r.headers.get("content-type");
+    console.error("Sign in failed:", r.status, r.statusText);
+    console.error("Requested URL:", url.replace(SB_URL, "[SUPABASE_URL]"));
+
     if (contentType?.includes("application/json")) {
       const d = await r.json();
       throw new Error(d.error_description || d.msg || `Login failed: ${r.status}`);
