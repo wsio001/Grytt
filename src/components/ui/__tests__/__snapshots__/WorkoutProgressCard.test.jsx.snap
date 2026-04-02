@@ -1,0 +1,210 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`WorkoutProgressCard Component > should match snapshot 1`] = `
+<div
+  class="_card_1bc598"
+>
+  <div
+    class=""
+  >
+    <div
+      class="_exerciseCard_1bc598"
+    >
+      <div
+        class="_exerciseHeader_1bc598"
+      >
+        <div
+          class="_exerciseInfo_1bc598"
+        >
+          <div
+            class="_exerciseDetails_1bc598"
+          >
+            <p
+              class="_exerciseName_1bc598"
+            >
+              Bench Press
+            </p>
+            <div
+              class="_tagContainer_1bc598"
+            >
+              <span
+                class="_tag_1bc598"
+              >
+                Chest
+              </span>
+              <span
+                class="_tag_1bc598"
+              >
+                Tricep
+              </span>
+            </div>
+          </div>
+        </div>
+        <span
+          class="_setsBadge_1bc598"
+        >
+          3
+           sets
+        </span>
+      </div>
+      <div
+        class="_spacer_1bc598"
+      />
+      <div
+        class="_setsContainer_1bc598"
+      >
+        <div
+          style="display: grid; grid-template-columns: 0.5fr 2fr 2.5fr 0.5fr 2.5fr; align-items: center; gap: 4px;"
+        >
+          <span
+            class="_setLabel_1bc598"
+          >
+            S
+            1
+          </span>
+          <div />
+          <div
+            class="_inputGroup_1bc598"
+          >
+            <input
+              class="_input_1bc598"
+              inputmode="numeric"
+              placeholder="0"
+              style="text-align: right;"
+              type="text"
+              value="10"
+            />
+            <span
+              class="_inputLabel_1bc598"
+            >
+              reps
+            </span>
+          </div>
+          <span
+            class="_multiplier_1bc598"
+          >
+            ×
+          </span>
+          <div
+            class="_inputGroup_1bc598"
+          >
+            <input
+              class="_input_1bc598"
+              inputmode="decimal"
+              placeholder="0"
+              style="text-align: right;"
+              type="text"
+              value="135"
+            />
+            <span
+              class="_inputLabel_1bc598"
+            >
+              lbs
+            </span>
+          </div>
+        </div>
+        <div
+          style="display: grid; grid-template-columns: 0.5fr 2fr 2.5fr 0.5fr 2.5fr; align-items: center; gap: 4px;"
+        >
+          <span
+            class="_setLabel_1bc598"
+          >
+            S
+            2
+          </span>
+          <div />
+          <div
+            class="_inputGroup_1bc598"
+          >
+            <input
+              class="_input_1bc598"
+              inputmode="numeric"
+              placeholder="0"
+              style="text-align: right;"
+              type="text"
+              value="10"
+            />
+            <span
+              class="_inputLabel_1bc598"
+            >
+              reps
+            </span>
+          </div>
+          <span
+            class="_multiplier_1bc598"
+          >
+            ×
+          </span>
+          <div
+            class="_inputGroup_1bc598"
+          >
+            <input
+              class="_input_1bc598"
+              inputmode="decimal"
+              placeholder="0"
+              style="text-align: right;"
+              type="text"
+              value="135"
+            />
+            <span
+              class="_inputLabel_1bc598"
+            >
+              lbs
+            </span>
+          </div>
+        </div>
+        <div
+          style="display: grid; grid-template-columns: 0.5fr 2fr 2.5fr 0.5fr 2.5fr; align-items: center; gap: 4px;"
+        >
+          <span
+            class="_setLabel_1bc598"
+          >
+            S
+            3
+          </span>
+          <div />
+          <div
+            class="_inputGroup_1bc598"
+          >
+            <input
+              class="_input_1bc598"
+              inputmode="numeric"
+              placeholder="0"
+              style="text-align: right;"
+              type="text"
+              value="8"
+            />
+            <span
+              class="_inputLabel_1bc598"
+            >
+              reps
+            </span>
+          </div>
+          <span
+            class="_multiplier_1bc598"
+          >
+            ×
+          </span>
+          <div
+            class="_inputGroup_1bc598"
+          >
+            <input
+              class="_input_1bc598"
+              inputmode="decimal"
+              placeholder="0"
+              style="text-align: right;"
+              type="text"
+              value="135"
+            />
+            <span
+              class="_inputLabel_1bc598"
+            >
+              lbs
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LibraryHeader Component > should render correctly with showAdd=false 1`] = `
+<div
+  class="_container_ee10ee"
+>
+  <h2
+    class="_title_ee10ee"
+  >
+    Exercise Library
+  </h2>
+  <button
+    class="_button_ee10ee _buttonAdd_ee10ee"
+  >
+    <svg
+      class="lucide lucide-plus"
+      fill="none"
+      height="20"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M5 12h14"
+      />
+      <path
+        d="M12 5v14"
+      />
+    </svg>
+  </button>
+</div>
+`;

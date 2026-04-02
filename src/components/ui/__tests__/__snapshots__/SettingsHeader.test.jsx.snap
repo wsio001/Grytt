@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsHeader Component > should render correctly with showAdd=false 1`] = `
+<div
+  class="_container_033340"
+>
+  <h2
+    class="_title_033340"
+  >
+    Muscle Groups
+  </h2>
+  <button
+    class="_button_033340 _buttonAdd_033340"
+  >
+    <svg
+      class="lucide lucide-plus"
+      fill="none"
+      height="20"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M5 12h14"
+      />
+      <path
+        d="M12 5v14"
+      />
+    </svg>
+  </button>
+</div>
+`;

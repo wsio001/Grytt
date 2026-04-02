@@ -1,0 +1,45 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CategorySelector Component > should match snapshot 1`] = `
+<div>
+  <p
+    class="_label_071050"
+  >
+    Main Muscle Group
+  </p>
+  <div
+    class="_buttonContainer_071050"
+  >
+    <button
+      class="_button_071050 _buttonActive_071050"
+    >
+      Chest
+    </button>
+    <button
+      class="_button_071050 _buttonInactive_071050"
+    >
+      Back
+    </button>
+    <button
+      class="_button_071050 _buttonInactive_071050"
+    >
+      Shoulders
+    </button>
+    <button
+      class="_button_071050 _buttonInactive_071050"
+    >
+      Arms
+    </button>
+    <button
+      class="_button_071050 _buttonInactive_071050"
+    >
+      Legs
+    </button>
+    <button
+      class="_button_071050 _buttonInactive_071050"
+    >
+      Core
+    </button>
+  </div>
+</div>
+`;

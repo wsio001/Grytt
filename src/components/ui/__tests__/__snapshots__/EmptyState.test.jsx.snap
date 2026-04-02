@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EmptyState Component > should render correctly 1`] = `
+<div
+  class="_container_89c7ef"
+>
+  Test message
+</div>
+`;

@@ -9,7 +9,9 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:changed": "vitest --changed",
+    "test:related": "vitest related"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",

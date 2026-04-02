@@ -1,0 +1,47 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MuscleCounterCard Component > should match snapshot 1`] = `
+<div
+  class="_card_2dae4c"
+>
+  <p
+    class="_title_2dae4c"
+  >
+    Chest
+  </p>
+  <div
+    class="_muscleList_2dae4c"
+  >
+    <div
+      class="_muscleItem_2dae4c _muscleInProgress_2dae4c"
+    >
+      <span
+        class="_muscleName_2dae4c"
+      >
+        Chest
+      </span>
+      <span
+        class="_muscleCount_2dae4c"
+      >
+        12
+        /15
+      </span>
+    </div>
+    <div
+      class="_muscleItem_2dae4c _muscleInProgress_2dae4c"
+    >
+      <span
+        class="_muscleName_2dae4c"
+      >
+        Front Delt
+      </span>
+      <span
+        class="_muscleCount_2dae4c"
+      >
+        9
+        /10
+      </span>
+    </div>
+  </div>
+</div>
+`;

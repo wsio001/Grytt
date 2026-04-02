@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MuscleCarousel Component > should match snapshot 1`] = `
+<div
+  class="_container_d59cf7"
+>
+  <button
+    class="_button_d59cf7 _buttonActive_d59cf7"
+  >
+    Chest
+  </button>
+  <button
+    class="_button_d59cf7 _buttonInactive_d59cf7"
+  >
+    Back
+  </button>
+  <button
+    class="_button_d59cf7 _buttonInactive_d59cf7"
+  >
+    Shoulders
+  </button>
+</div>
+`;

@@ -1,0 +1,57 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DateSelector Component > should match snapshot 1`] = `
+<div
+  class="_container_ad35ea"
+>
+  <button
+    class="_dayButton_ad35ea _dayButtonInactive_ad35ea"
+  >
+    <div>
+      Sun
+    </div>
+  </button>
+  <button
+    class="_dayButton_ad35ea _dayButtonActive_ad35ea"
+  >
+    <div>
+      Mon
+    </div>
+  </button>
+  <button
+    class="_dayButton_ad35ea _dayButtonInactive_ad35ea"
+  >
+    <div>
+      Tue
+    </div>
+  </button>
+  <button
+    class="_dayButton_ad35ea _dayButtonInactive_ad35ea"
+  >
+    <div>
+      Wed
+    </div>
+  </button>
+  <button
+    class="_dayButton_ad35ea _dayButtonInactive_ad35ea"
+  >
+    <div>
+      Thu
+    </div>
+  </button>
+  <button
+    class="_dayButton_ad35ea _dayButtonInactive_ad35ea"
+  >
+    <div>
+      Fri
+    </div>
+  </button>
+  <button
+    class="_dayButton_ad35ea _dayButtonInactive_ad35ea"
+  >
+    <div>
+      Sat
+    </div>
+  </button>
+</div>
+`;
