@@ -10,8 +10,6 @@ import { sbLoadData, supabase } from "./lib/supabase";
 import { DAYS, INITIAL_MUSCLE_CATS, DEFAULT_GOALS, todayDay, emptyPlan } from "./constants";
 import { DEFAULT_EX } from "./data/defaultExercises";
 
-const SESSION_KEY = "grytt_session";
-
 export default function App() {
   const [session, setSession]     = useState(null);
   const [tab, setTab]             = useState("today");
@@ -64,47 +62,55 @@ export default function App() {
     }
   };
 
-  // Restore session on mount
+  // Restore session on mount using Supabase's built-in session management
   useEffect(() => {
     const restoreSession = async () => {
-      const stored = localStorage.getItem(SESSION_KEY);
-      if (stored) {
-        try {
-          const sess = JSON.parse(stored);
-          // Validate the session has required fields
-          if (sess.access_token && sess.user) {
-            // CRITICAL: Tell Supabase client about the restored session
-            const { error } = await supabase.auth.setSession({
-              access_token: sess.access_token,
-              refresh_token: sess.refresh_token
-            });
+      try {
+        // Get current session from Supabase (auto-restored from localStorage)
+        const { data: { session }, error } = await supabase.auth.getSession();
 
-            if (error) {
-              console.error('Failed to restore session:', error);
-              localStorage.removeItem(SESSION_KEY);
-              setLoading(false);
-              return;
-            }
-
-            await onLogin(sess);
-            return;
-          }
-        } catch (e) {
-          console.error('Session restore error:', e);
-          localStorage.removeItem(SESSION_KEY);
+        if (error) {
+          console.error('Failed to get session:', error);
+          setLoading(false);
+          return;
         }
+
+        if (session) {
+          console.log('✅ Session restored automatically');
+          await onLogin(session);
+        } else {
+          setLoading(false);
+        }
+      } catch (e) {
+        console.error('Session restore error:', e);
+        setLoading(false);
       }
-      setLoading(false);
     };
+
     restoreSession();
+
+    // Listen for auth state changes (session refresh, logout, etc.)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event);
+
+      if (event === 'SIGNED_OUT') {
+        onLogout();
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        console.log('🔄 Token refreshed automatically');
+        setSession(session);
+      } else if (event === 'SIGNED_IN' && session) {
+        setSession(session);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const onLogin = async (sess) => {
     setLoading(true);
     setSession(sess);
-
-    // Persist session (store the full session object with tokens)
-    localStorage.setItem(SESSION_KEY, JSON.stringify(sess));
 
     // STEP 1: Try to load from localStorage cache first (instant)
     const cachedData = loadCachedData(sess.user.id);
@@ -162,8 +168,9 @@ export default function App() {
     setLoading(false);
   };
 
-  const onLogout = () => {
-    localStorage.removeItem(SESSION_KEY);
+  const onLogout = async () => {
+    // Sign out from Supabase (clears session from localStorage automatically)
+    await supabase.auth.signOut();
     clearCache(); // Clear the data cache on logout
     setSession(null); setEx(null); setPlan(null); setGoals(null); setLogs(null);
     setDayNames(Object.fromEntries(DAYS.map(d => [d, ""]))); setMCats(INITIAL_MUSCLE_CATS);
@@ -270,7 +277,7 @@ export default function App() {
       </div>
       <div className="flex-1 overflow-y-auto px-4 sm:px-9 py-4 pb-24">
         {tab === "today"    && <TodayView   exMap={exMap} plan={plan} logs={logs} setLogs={setLogs} />}
-        {tab === "planner"  && <PlannerView exMap={exMap} exercises={exercises} plan={plan} setPlan={setPlan} goals={goals} muscleCats={muscleCats} activeDay={activeDay} setActiveDay={setActiveDay} dayNames={dayNames} setDayNames={setDayNames} />}
+        {tab === "planner"  && <PlannerView exMap={exMap} exercises={exercises} plan={plan} setPlan={setPlan} goals={goals} muscleCats={muscleCats} activeDay={activeDay} setActiveDay={setActiveDay} />}
         {tab === "library"  && <LibraryView exercises={exercises} setExercises={setEx} goals={goals} muscleCats={muscleCats} setPlan={setPlan} />}
         {tab === "settings" && <SettingsView goals={goals} setGoals={setGoals} setExercises={setEx} muscleCats={muscleCats} setMuscleCats={setMCats} />}
       </div>

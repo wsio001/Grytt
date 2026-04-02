@@ -8,18 +8,14 @@ import { useDragReducer } from "../../../hooks/useDragReducer";
 import { DAYS, DAYS_FULL, uid } from "../../../constants";
 import styles from "./PlannerView.module.css";
 
-export default function PlannerView({ exMap, exercises, plan, setPlan, goals, muscleCats, activeDay, setActiveDay, dayNames, setDayNames }) {
+export default function PlannerView({ exMap, exercises, plan, setPlan, goals, muscleCats, activeDay, setActiveDay }) {
   const [drag, dispatchDrag] = useDragReducer();
   const [libCats, setLibCats] = useState(Object.fromEntries(Object.keys(muscleCats).map(c => [c, false])));
-  const [editingName, setEditingName] = useState(false);
-  const [nameDraft, setNameDraft] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showLibrary, setShowLibrary] = useState(false);
   const [contextMenu, setContextMenu] = useState(null); // { exercise, show }
   const [longPressTimer, setLongPressTimer] = useState(null);
   const [isDraggingMobile, setIsDraggingMobile] = useState(false);
-
-  useEffect(() => { setEditingName(false); setNameDraft(dayNames[activeDay] || ""); }, [activeDay]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -89,7 +85,6 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
 
   const updSets = useCallback((day, ri, peId, d) => setPlan(prev => ({ ...prev, [day]: prev[day].map((row, i) => i === ri ? row.map(pe => pe.id === peId ? { ...pe, sets: Math.max(1, pe.sets + d) } : pe) : row) })), [setPlan]);
   const remPe = useCallback((day, ri, peId) => setPlan(prev => ({ ...prev, [day]: prev[day].map((row, i) => i === ri ? row.filter(pe => pe.id !== peId) : row).filter(r => r.length > 0) })), [setPlan]);
-  const confirmName = useCallback(() => { setDayNames(p => ({ ...p, [activeDay]: nameDraft })); setEditingName(false); }, [activeDay, nameDraft, setDayNames]);
 
   // Mobile: tap to add exercise with context menu
   const handleMobileExerciseClick = useCallback((ex) => {
@@ -187,12 +182,6 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
       <DateSelector
         activeDay={activeDay}
         setActiveDay={setActiveDay}
-        dayNames={dayNames}
-        editingName={editingName}
-        setEditingName={setEditingName}
-        nameDraft={nameDraft}
-        setNameDraft={setNameDraft}
-        confirmName={confirmName}
       />
 
       <div className={isMobile ? "" : "flex gap-3"}>
@@ -215,7 +204,6 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
           plan={plan}
           exMap={exMap}
           dragState={{ isMobile, isDragging, isDraggingMobile, drag }}
-          nameEditor={{ editingName, setEditingName, nameDraft, setNameDraft, confirmName, dayNames }}
           workoutHandlers={{ updSets, remPe }}
           dragHandlers={{ dispatchDrag, resetDrag, handleDrop, handleTouchStart, handleTouchEnd, handleTouchMove }}
           onEmptyClick={isMobile ? () => setShowLibrary(true) : undefined}

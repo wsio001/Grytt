@@ -1,7 +1,8 @@
 /* ExerciseLibraryModal Styles */
 
 .fab {
-  @apply fixed bottom-20 right-4 w-14 h-14 bg-orange-500 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-orange-600 transition-colors z-40;
+  @apply fixed right-4 w-14 h-14 bg-orange-500 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-orange-600 transition-colors z-40;
+  bottom: calc(5rem + env(safe-area-inset-bottom, 0px) + 0.5rem);
 }
 
 .overlay {

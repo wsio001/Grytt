@@ -29,11 +29,11 @@
 }
 
 .nameDisplay {
-  @apply text-xs text-white font-medium;
+  @apply text-sm text-white font-medium;
 }
 
 .nameDisplayUnnamed {
-  @apply text-xs text-gray-600;
+  @apply text-sm text-gray-600;
 }
 
 .editButton {

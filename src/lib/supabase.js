@@ -9,8 +9,15 @@ if (!SB_URL || !SB_KEY) {
   console.error("SB_KEY:", SB_KEY ? "✓" : "✗ MISSING");
 }
 
-// Create Supabase client
+// Create Supabase client with persistent session
 export const supabase = createClient(SB_URL, SB_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false,
+    storage: window.localStorage,
+    storageKey: 'grytt_supabase_auth'
+  },
   realtime: {
     params: {
       eventsPerSecond: 10

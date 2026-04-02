@@ -30,7 +30,7 @@ export default function PlannerContainer({
       }}>
 
       <div className={styles.header}>
-        <p className={styles.title}>{fullDayName}'s Workout</p>
+        <p className={styles.title}>{fullDayName}</p>
         <div className={styles.nameEditor}>
           {editingName ? (
             <>

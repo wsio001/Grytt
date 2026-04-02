@@ -70,6 +70,7 @@ export default function WorkoutProgressCard({ row, inputs, exMap, lastLogByEx, t
                         inputMode="numeric"
                         value={s.reps}
                         onChange={e => upd(pe.id, i, "reps", e.target.value.replace(/[^0-9]/g, ""))}
+                        onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); }}
                         placeholder="0"
                         className={styles.input}
                         style={{ textAlign: "right" }}
@@ -83,6 +84,7 @@ export default function WorkoutProgressCard({ row, inputs, exMap, lastLogByEx, t
                         inputMode="decimal"
                         value={s.weight}
                         onChange={e => upd(pe.id, i, "weight", e.target.value.replace(/[^0-9.]/g, ""))}
+                        onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); }}
                         placeholder="0"
                         className={styles.input}
                         style={{ textAlign: "right" }}
