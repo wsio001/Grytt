@@ -42,19 +42,24 @@
 }
 
 .exerciseList {
-  @apply p-2 space-y-1 bg-gray-900;
+  @apply bg-gray-900;
 }
 
 .exerciseButton {
-  @apply w-full flex items-center gap-2 rounded px-3 py-2.5 text-sm transition-colors;
+  @apply w-full flex items-center gap-2 px-3 py-3 text-sm transition-colors;
+  border-bottom: 1px solid rgb(55, 65, 81);
+}
+
+.exerciseButton:last-child {
+  border-bottom: none;
 }
 
 .exerciseButtonDisabled {
-  @apply opacity-40 cursor-not-allowed bg-gray-800;
+  @apply opacity-40 cursor-not-allowed bg-gray-800/50;
 }
 
 .exerciseButtonActive {
-  @apply bg-gray-800 hover:bg-gray-700 active:bg-gray-600;
+  @apply hover:bg-gray-700 active:bg-gray-600;
 }
 
 .exerciseName {

@@ -11,8 +11,8 @@ export default function ExerciseLibrarySidebar({
   resetDrag
 }) {
   return (
-    <div className={styles.sidebar} style={{ width: "30%", flexShrink: 0, maxHeight: 520 }}>
-      <p className={styles.title}>Library</p>
+    <div className={styles.sidebar} style={{ width: "320px", flexShrink: 0, maxHeight: 600 }}>
+      <p className={styles.title}>Exercise Library</p>
       <div className={styles.categoryList}>
         {Object.entries(libGrouped).map(([cat, exs]) => {
           if (!exs.length) return null;

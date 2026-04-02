@@ -17,6 +17,11 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
   const [longPressTimer, setLongPressTimer] = useState(null);
   const [isDraggingMobile, setIsDraggingMobile] = useState(false);
 
+  // Name editor state
+  const [dayNames, setDayNames] = useState({});
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState("");
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
@@ -52,6 +57,11 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
   }, [exercises, muscleCats]);
 
   const resetDrag = useCallback(() => dispatchDrag({ type: "RESET" }), []);
+
+  const confirmName = useCallback(() => {
+    setDayNames(prev => ({ ...prev, [activeDay]: nameDraft }));
+    setEditingName(false);
+  }, [activeDay, nameDraft]);
 
   const handleDrop = useCallback((targetDay, rowIndex, position) => {
     if (!drag.ex && !drag.pe) return;
@@ -204,6 +214,7 @@ export default function PlannerView({ exMap, exercises, plan, setPlan, goals, mu
           plan={plan}
           exMap={exMap}
           dragState={{ isMobile, isDragging, isDraggingMobile, drag }}
+          nameEditor={{ editingName, setEditingName, nameDraft, setNameDraft, confirmName, dayNames }}
           workoutHandlers={{ updSets, remPe }}
           dragHandlers={{ dispatchDrag, resetDrag, handleDrop, handleTouchStart, handleTouchEnd, handleTouchMove }}
           onEmptyClick={isMobile ? () => setShowLibrary(true) : undefined}

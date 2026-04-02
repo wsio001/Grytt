@@ -1,11 +1,11 @@
 /* PlannerView Styles */
 
 .volumeSection {
-  @apply bg-gray-900 rounded-xl p-4 mb-4;
+  @apply bg-gray-900 rounded-xl p-6 mb-6 border border-gray-800;
 }
 
 .volumeTitle {
-  @apply text-xs text-gray-500 uppercase tracking-wider mb-3;
+  @apply text-sm text-gray-400 uppercase tracking-wider mb-4 font-semibold;
 }
 
 .carouselContainer {
@@ -19,7 +19,7 @@
 }
 
 .gridContainer {
-  @apply grid grid-cols-6 gap-2;
+  @apply grid grid-cols-6 gap-3;
 }
 
 .mainLayout {

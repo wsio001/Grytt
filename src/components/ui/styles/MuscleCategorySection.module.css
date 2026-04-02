@@ -1,9 +1,13 @@
 /* MuscleCategorySection Styles */
 
+.categoryContainer {
+  @apply bg-gray-900 border border-gray-800 rounded-xl p-4 mb-4;
+}
+
 .categoryTitle {
-  @apply text-xs font-semibold uppercase tracking-wider text-orange-400 mb-2;
+  @apply text-sm font-semibold uppercase tracking-wider text-orange-400 mb-3;
 }
 
 .muscleGrid {
-  @apply grid grid-cols-2 gap-2;
+  @apply grid grid-cols-2 gap-3;
 }

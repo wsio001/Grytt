@@ -14,7 +14,7 @@ export default function MuscleCategorySection({
   if (!activeMuscles.length) return null;
 
   return (
-    <div>
+    <div className={styles.categoryContainer}>
       <p className={styles.categoryTitle}>
         {category}
       </p>

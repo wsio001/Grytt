@@ -60,18 +60,18 @@ export default function PlannerWorkoutCard({
                   <button
                     onClick={() => updSets(activeDay, rowIndex, pe.id, -1)}
                     className={styles.button}>
-                    <Minus size={10} />
+                    <Minus size={20} />
                   </button>
                   <span className={styles.setsCount}>{pe.sets}</span>
                   <button
                     onClick={() => updSets(activeDay, rowIndex, pe.id, 1)}
                     className={styles.button}>
-                    <Plus size={10} />
+                    <Plus size={20} />
                   </button>
                   <button
                     onClick={() => remPe(activeDay, rowIndex, pe.id)}
                     className={styles.deleteButton}>
-                    <Trash2 size={10} />
+                    <Trash2 size={15} />
                   </button>
                 </div>
               </div>

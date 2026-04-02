@@ -1,7 +1,7 @@
 /* PlannerContainer Styles */
 
 .container {
-  @apply bg-gray-900 rounded-xl p-3 flex-1 transition-all;
+  @apply bg-gray-900 rounded-xl p-5 flex-1 transition-all border border-gray-800;
 }
 
 .containerDragging {
@@ -9,11 +9,11 @@
 }
 
 .header {
-  @apply flex items-center justify-between mb-3;
+  @apply flex items-center justify-between mb-4;
 }
 
 .title {
-  @apply text-sm font-semibold text-orange-400;
+  @apply text-lg font-semibold text-orange-400;
 }
 
 .nameEditor {
@@ -61,7 +61,7 @@
 }
 
 .workoutList {
-  @apply space-y-2;
+  @apply space-y-3;
 }
 
 .dropZone {

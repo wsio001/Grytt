@@ -1,19 +1,19 @@
 /* DateSelector Styles */
 
 .container {
-  @apply flex gap-1 mb-4;
+  @apply flex gap-2 mb-6;
 }
 
 .dayButton {
-  @apply flex-1 py-1.5 text-center rounded-lg text-sm font-medium transition-colors;
+  @apply flex-1 py-2.5 text-center rounded-lg text-sm font-medium transition-all;
 }
 
 .dayButtonActive {
-  @apply bg-orange-500 text-white;
+  @apply bg-orange-500 text-white shadow-lg shadow-orange-500/20;
 }
 
 .dayButtonInactive {
-  @apply bg-gray-900 text-gray-400 hover:bg-gray-800;
+  @apply bg-gray-900 text-gray-400 hover:bg-gray-800 hover:text-gray-300;
 }
 
 .dayName {

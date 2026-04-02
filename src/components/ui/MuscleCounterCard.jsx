@@ -19,8 +19,8 @@ export default function MuscleCounterCard({ category, muscles, vol, goals }) {
                   ? styles.muscleInProgress
                   : styles.muscleNotStarted
               }`}>
-              <div className={styles.muscleName}>{muscle}</div>
-              <div className={styles.muscleCount}>{curr}{tgt > 0 ? `/${tgt}` : "—"}</div>
+              <span className={styles.muscleName}>{muscle}</span>
+              <span className={styles.muscleCount}>{curr}{tgt > 0 ? `/${tgt}` : "—"}</span>
             </div>
           );
         })}

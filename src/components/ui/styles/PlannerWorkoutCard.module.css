@@ -17,7 +17,7 @@
 }
 
 .cardRow {
-  @apply flex gap-2;
+  @apply flex gap-3;
 }
 
 .cardRowMobile {
@@ -29,7 +29,7 @@
 }
 
 .exerciseCard {
-  @apply flex-1 bg-gray-800 rounded-lg p-2 transition-all;
+  @apply flex-1 bg-gray-800 rounded-lg p-3 transition-all hover:bg-gray-700;
 }
 
 .exerciseCardMobile {
@@ -45,7 +45,7 @@
 }
 
 .exerciseHeader {
-  @apply flex items-center gap-1.5;
+  @apply flex items-center gap-2;
 }
 
 .gripIcon {
@@ -57,19 +57,19 @@
 }
 
 .exerciseName {
-  @apply flex-1 text-xs font-medium truncate;
+  @apply flex-1 text-sm font-medium truncate;
 }
 
 .button {
-  @apply p-0.5 bg-gray-700 rounded hover:bg-gray-600;
+  @apply p-1 bg-gray-700 rounded hover:bg-gray-600 transition-colors;
 }
 
 .setsCount {
-  @apply w-4 text-center text-orange-400 font-bold text-xs;
+  @apply w-5 text-center text-orange-400 font-bold text-sm;
 }
 
 .deleteButton {
-  @apply p-0.5 text-red-400 rounded hover:bg-red-500/20 ml-0.5;
+  @apply p-1 text-red-400 rounded hover:bg-red-500/20 transition-colors ml-1;
 }
 
 .dropZoneSuperset {

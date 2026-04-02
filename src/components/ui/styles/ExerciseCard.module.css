@@ -1,7 +1,7 @@
 /* ExerciseCard Styles */
 
 .card {
-  @apply bg-gray-900 rounded-xl p-4;
+  @apply bg-gray-900 rounded-xl p-4 border border-gray-800;
 }
 
 .editInput {
@@ -29,7 +29,7 @@
 }
 
 .exerciseName {
-  @apply font-medium text-white;
+  @apply font-medium text-white text-base;
 }
 
 .tagContainer {
