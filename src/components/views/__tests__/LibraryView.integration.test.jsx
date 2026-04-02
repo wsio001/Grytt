@@ -118,6 +118,6 @@ describe('LibraryView - Complete Workflow', () => {
     fireEvent.click(screen.getByText('Legs'))
 
     // Should show empty state
-    expect(screen.getByText(/no exercises yet/i)).toBeInTheDocument()
+    expect(screen.getByText(/no exercises in legs/i)).toBeInTheDocument()
   })
 })

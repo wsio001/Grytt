@@ -5,11 +5,11 @@
 }
 
 .muscleName {
-  @apply text-sm font-medium;
+  @apply text-sm font-medium min-w-0 flex-shrink;
 }
 
 .controls {
-  @apply flex items-center gap-2;
+  @apply flex items-center gap-2 flex-shrink-0;
 }
 
 .button {

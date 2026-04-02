@@ -5,16 +5,27 @@ import * as supabase from '../lib/supabase'
 import * as debouncedSave from '../hooks/useDebouncedSave'
 
 // Mock Supabase and debounced save
-vi.mock('../lib/supabase', () => ({
-  supabase: {
-    auth: {
-      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } }))
-    }
-  },
-  sbSignIn: vi.fn(),
-  sbLoadData: vi.fn(),
-  sbSaveData: vi.fn()
-}))
+vi.mock('../lib/supabase', () => {
+  const mockGetSession = () => {
+    // Check localStorage for session (mimicking Supabase behavior)
+    const sessionStr = localStorage.getItem('grytt_session')
+    const session = sessionStr ? JSON.parse(sessionStr) : null
+    return Promise.resolve({ data: { session }, error: null })
+  }
+  const mockOnAuthStateChange = () => ({ data: { subscription: { unsubscribe: () => {} } } })
+
+  return {
+    supabase: {
+      auth: {
+        onAuthStateChange: mockOnAuthStateChange,
+        getSession: mockGetSession
+      }
+    },
+    sbSignIn: vi.fn(),
+    sbLoadData: vi.fn(),
+    sbSaveData: vi.fn()
+  }
+})
 
 vi.mock('../hooks/useDebouncedSave', async () => {
   const actual = await vi.importActual('../hooks/useDebouncedSave')
