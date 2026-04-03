@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head><title>Generate Grytt Icons</title></head>
+<body>
+<canvas id="canvas" width="512" height="512"></canvas>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+function createIcon(size) {
+  canvas.width = size;
+  canvas.height = size;
+  
+  // Orange background
+  ctx.fillStyle = '#fb923c';
+  ctx.fillRect(0, 0, size, size);
+  
+  // White dumbbell
+  ctx.fillStyle = 'white';
+  const scale = size / 512;
+  const centerX = size / 2;
+  const centerY = size / 2;
+  
+  // Left weight
+  ctx.fillRect(centerX - 140*scale, centerY - 50*scale, 40*scale, 100*scale);
+  ctx.fillRect(centerX - 110*scale, centerY - 40*scale, 10*scale, 80*scale);
+  
+  // Bar
+  ctx.fillRect(centerX - 100*scale, centerY - 10*scale, 200*scale, 20*scale);
+  
+  // Right weight
+  ctx.fillRect(centerX + 100*scale, centerY - 50*scale, 40*scale, 100*scale);
+  ctx.fillRect(centerX + 100*scale, centerY - 40*scale, 10*scale, 80*scale);
+  
+  // Download
+  const link = document.createElement('a');
+  link.download = `icon-${size}.png`;
+  link.href = canvas.toDataURL();
+  link.click();
+}
+
+// Generate all sizes
+setTimeout(() => createIcon(180), 100);
+setTimeout(() => createIcon(192), 500);
+setTimeout(() => createIcon(512), 1000);
+</script>
+<p>Icons will download automatically. Check your Downloads folder for icon-180.png, icon-192.png, and icon-512.png</p>
+<p>Move them to the public/icons/ directory</p>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="115" fill="#fb923c"/>
+
+  <!-- Dumbbell Icon (centered, scaled to fit) -->
+  <g transform="translate(256, 256)">
+    <!-- Left weight -->
+    <rect x="-140" y="-50" width="40" height="100" rx="8" fill="white"/>
+    <rect x="-110" y="-40" width="10" height="80" rx="5" fill="white"/>
+
+    <!-- Bar -->
+    <rect x="-100" y="-10" width="200" height="20" rx="10" fill="white"/>
+
+    <!-- Right weight -->
+    <rect x="100" y="-50" width="40" height="100" rx="8" fill="white"/>
+    <rect x="100" y="-40" width="10" height="80" rx="5" fill="white"/>
+  </g>
+</svg>
