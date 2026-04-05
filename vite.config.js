@@ -10,6 +10,15 @@ export default defineConfig({
         drop_console: true,  // Remove all console.* in production
         drop_debugger: true, // Remove debugger statements
       }
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'supabase-vendor': ['@supabase/supabase-js'],
+          'icons-vendor': ['lucide-react'],
+        }
+      }
     }
   }
 })
