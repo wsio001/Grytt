@@ -1,11 +1,13 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, lazy, Suspense } from "react";
 import { Dumbbell, Calendar, BookOpen, Settings, LogOut, RefreshCw } from "lucide-react";
 import LoginScreen from "./components/LoginScreen";
-import TodayView from "./components/views/TodayView/TodayView";
-import PlannerView from "./components/views/PlannerView/PlannerView";
-import LibraryView from "./components/views/LibraryView/LibraryView";
-import SettingsView from "./components/views/SettingsView/SettingsView";
 import { useDebouncedSave, loadCachedData, clearCache, hasUnsavedChanges } from "./hooks/useDebouncedSave";
+
+// Lazy load views for code splitting and faster initial load
+const TodayView = lazy(() => import("./components/views/TodayView/TodayView"));
+const PlannerView = lazy(() => import("./components/views/PlannerView/PlannerView"));
+const LibraryView = lazy(() => import("./components/views/LibraryView/LibraryView"));
+const SettingsView = lazy(() => import("./components/views/SettingsView/SettingsView"));
 import { sbLoadData, supabase } from "./lib/supabase";
 import { DAYS, INITIAL_MUSCLE_CATS, DEFAULT_GOALS, todayDay, emptyPlan } from "./constants";
 import { DEFAULT_EX } from "./data/defaultExercises";
@@ -276,10 +278,16 @@ export default function App() {
         </div>
       </div>
       <div className="flex-1 overflow-y-auto px-4 sm:px-9 py-4 pb-24">
-        {tab === "today"    && <TodayView   exMap={exMap} plan={plan} logs={logs} setLogs={setLogs} />}
-        {tab === "planner"  && <PlannerView exMap={exMap} exercises={exercises} plan={plan} setPlan={setPlan} goals={goals} muscleCats={muscleCats} activeDay={activeDay} setActiveDay={setActiveDay} />}
-        {tab === "library"  && <LibraryView exercises={exercises} setExercises={setEx} goals={goals} muscleCats={muscleCats} setPlan={setPlan} />}
-        {tab === "settings" && <SettingsView goals={goals} setGoals={setGoals} setExercises={setEx} muscleCats={muscleCats} setMuscleCats={setMCats} />}
+        <Suspense fallback={
+          <div className="flex items-center justify-center p-8">
+            <Dumbbell className="text-orange-500 animate-pulse" size={32} />
+          </div>
+        }>
+          {tab === "today"    && <TodayView   exMap={exMap} plan={plan} logs={logs} setLogs={setLogs} />}
+          {tab === "planner"  && <PlannerView exMap={exMap} exercises={exercises} plan={plan} setPlan={setPlan} goals={goals} muscleCats={muscleCats} activeDay={activeDay} setActiveDay={setActiveDay} />}
+          {tab === "library"  && <LibraryView exercises={exercises} setExercises={setEx} goals={goals} muscleCats={muscleCats} setPlan={setPlan} />}
+          {tab === "settings" && <SettingsView goals={goals} setGoals={setGoals} setExercises={setEx} muscleCats={muscleCats} setMuscleCats={setMCats} />}
+        </Suspense>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 z-50 safe-area-bottom flex-shrink-0">
         <div className="flex">
