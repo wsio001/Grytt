@@ -1,6 +1,6 @@
 // Grytt Service Worker - Offline Support
 // Cache version - increment this to force cache refresh on deploy
-const CACHE_VERSION = 'grytt-v1.1.0';
+const CACHE_VERSION = 'grytt-v1.2.0';
 const CACHE_NAME = `grytt-cache-${CACHE_VERSION}`;
 
 // Assets to cache immediately on install
