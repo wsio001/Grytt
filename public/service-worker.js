@@ -1,6 +1,6 @@
 // Grytt Service Worker - Offline Support
 // Cache version - increment this to force cache refresh on deploy
-const CACHE_VERSION = 'grytt-v1.0.0';
+const CACHE_VERSION = 'grytt-v1.1.0';
 const CACHE_NAME = `grytt-cache-${CACHE_VERSION}`;
 
 // Assets to cache immediately on install
@@ -8,7 +8,9 @@ const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/icons/icon.svg',
+  '/icons/icon-180.png',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
 ];
 
 // Install event - cache static assets
