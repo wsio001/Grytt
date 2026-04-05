@@ -25,18 +25,19 @@ export default function LibraryView({ exercises, setExercises, goals, muscleCats
 
   const generateInstructions = async (name, tags) => {
     try {
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      const resp = await fetch("/api/generate-instructions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: `Generate clear, concise workout instructions for "${name}" targeting: ${tags.join(", ")}.\nFormat as numbered steps (1. 2. 3. etc). Cover: starting position, movement execution, breathing, and common cues. Keep it practical and under 200 words. Plain text only, no markdown.` }]
-        })
+        body: JSON.stringify({ name, tags })
       });
       const data = await resp.json();
-      return data.content?.[0]?.text || "Could not generate instructions.";
-    } catch {
+      if (!resp.ok) {
+        console.error("API error:", data);
+        return "Could not generate instructions. Please try again.";
+      }
+      return data.instructions || "Could not generate instructions.";
+    } catch (error) {
+      console.error("Failed to generate instructions:", error);
       return "Could not generate instructions. Please try again.";
     }
   };
